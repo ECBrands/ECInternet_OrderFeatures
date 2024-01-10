@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+	<!-- Add settings / data so it can be picked up on frontend -->
+	<!-- KO: window.checkoutConfig.ecinternet_orderfeatures.xxxxx -->
+	<!-- JS: window.checkoutConfig.payment[ecinternet_orderfeatures][xxxxx] -->
+	<type name="Magento\Checkout\Model\CompositeConfigProvider">
+		<arguments>
+			<argument name="configProviders" xsi:type="array">
+				<item name="ecinternet_orderfeatures_checkout_config_provider" xsi:type="object">ECInternet\OrderFeatures\Model\ConfigProvider</item>
+			</argument>
+		</arguments>
+	</type>
+</config>

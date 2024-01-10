@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+	<columns name="sales_order_columns">
+		<column name="erp_terms" class="ECInternet\OrderFeatures\Ui\Component\Listing\Column\OrderErpTerms">
+			<settings>
+				<label translate="true">ERP Terms</label>
+				<visible>true</visible>
+				<sortable>false</sortable>
+			</settings>
+		</column>
+		<column name="external_order_reference" class="ECInternet\OrderFeatures\Ui\Component\Listing\Column\ExternalOrderReference">
+			<settings>
+				<label translate="true">External Order Reference</label>
+				<visible>true</visible>
+				<sortable>false</sortable>
+			</settings>
+		</column>
+		<column name="order_placement_location" class="ECInternet\OrderFeatures\Ui\Component\Listing\Column\PlacementLocation">
+			<settings>
+				<label translate="true">Order Placement Location</label>
+				<visible>true</visible>
+				<sortable>false</sortable>
+			</settings>
+		</column>
+		<column name="po_number" class="ECInternet\OrderFeatures\Ui\Component\Listing\Column\PoNumber">
+			<settings>
+				<label translate="true">PO Number</label>
+				<visible>true</visible>
+				<sortable>false</sortable>
+			</settings>
+		</column>
+		<column name="shipment_tracking_numbers" class="ECInternet\OrderFeatures\Ui\Component\Listing\Column\ShipmentTrackingNumbers">
+			<settings>
+				<label translate="true">Shipment Tracking Numbers</label>
+				<visible>true</visible>
+				<sortable>false</sortable>
+			</settings>
+		</column>
+	</columns>
+</listing>

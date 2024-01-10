@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+	<preference for="ECInternet\OrderFeatures\Api\ErptermsRepositoryInterface"
+	            type="ECInternet\OrderFeatures\Model\ErptermsRepository" />
+	<preference for="ECInternet\OrderFeatures\Api\Data\ErptermsInterface"
+	            type="ECInternet\OrderFeatures\Model\Erpterms" />
+
+	<!-- afterSavePaymentInformationAndPlaceOrder() - Takes extra inputs added during checkout and adds them to Order -->
+	<type name="Magento\Checkout\Model\PaymentInformationManagement">
+		<plugin name="ecinternet_orderfeatures-checkout_model_paymentinformatiomanagement"
+		        type="ECInternet\OrderFeatures\Plugin\Magento\Checkout\Model\PaymentInformationManagementPlugin" />
+	</type>
+
+	<!-- Allow hiding of billing address -->
+	<type name="Magento\Quote\Model\Quote">
+		<plugin name="ecinternet_orderfeatures-quote_model_quote"
+		        type="ECInternet\OrderFeatures\Plugin\Magento\Quote\Model\QuotePlugin" />
+	</type>
+
+	<!-- Add fields to Order API response -->
+	<type name="Magento\Sales\Api\OrderRepositoryInterface">
+		<plugin name="ecinternet_orderfeatures-sales_api_orderrepositoryinterface"
+		        type="ECInternet\OrderFeatures\Plugin\Magento\Sales\Api\OrderRepositoryInterfacePlugin" />
+	</type>
+
+	<!-- In <type> we added a class for which we want to assign new values for the arguments -->
+	<type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+		<arguments>
+			<!-- CollectionFactory has an array called "collections" in its own constructor. Therefore we have to refer
+			     to this parameter and set a new array as a means of collecting our data from the database. -->
+			<argument name="collections" xsi:type="array">
+				<!-- The value of the array indicates a virtual type of collection which hasn't been created yet -->
+				<item name="erpterms_listing_data_source" xsi:type="string">ECInternet\OrderFeatures\Model\ResourceModel\Erpterms\Grid\Collection</item>
+			</argument>
+		</arguments>
+	</type>
+
+	<!-- Custom Logger -->
+	<type name="ECInternet\OrderFeatures\Logger\Logger">
+		<arguments>
+			<argument name="name" xsi:type="string">OrderFeatures</argument>
+			<argument name="handlers" xsi:type="array">
+				<item name="system" xsi:type="object">ECInternet\OrderFeatures\Logger\Handler</item>
+			</argument>
+		</arguments>
+	</type>
+
+	<!-- Erpterms grid collection -->
+	<virtualType name="ECInternet\OrderFeatures\Model\ResourceModel\Erpterms\Grid\Collection"
+	             type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
+		<arguments>
+			<argument name="mainTable" xsi:type="string">ecinternet_orderfeatures_erpterms</argument>
+			<argument name="resourceModel" xsi:type="string">ECInternet\OrderFeatures\Model\ResourceModel\Erpterms</argument>
+		</arguments>
+	</virtualType>
+
+	<!-- Erpterms grid data provider -->
+	<virtualType name="ErptermsGridDataProvider"
+	             type="Magento\Framework\View\Element\UiComponent\DataProvider\DataProvider">
+		<arguments>
+			<argument name="collection" xsi:type="object" shared="false">ECInternet\OrderFeatures\Model\ResourceModel\Erpterms\Collection</argument>
+			<argument name="filterPool" xsi:type="object" shared="false">ErptermsGridFilterPool</argument>
+		</arguments>
+	</virtualType>
+
+	<!-- Erpterms grid filter pool -->
+	<virtualType name="ErptermsGridFilterPool"
+	             type="Magento\Framework\View\Element\UiComponent\DataProvider\FilterPool">
+		<arguments>
+			<argument name="appliers" xsi:type="array">
+				<item name="regular" xsi:type="object">Magento\Framework\View\Element\UiComponent\DataProvider\RegularFilter</item>
+				<item name="fulltext" xsi:type="object">Magento\Framework\View\Element\UiComponent\DataProvider\FulltextFilter</item>
+			</argument>
+		</arguments>
+	</virtualType>
+</config>

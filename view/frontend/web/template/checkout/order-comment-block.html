@@ -1,0 +1,13 @@
+<!-- ko if: window.checkoutConfig.ecinternet_orderfeatures.show_comment -->
+<div class="payment-option _collapsible opc-payment-additional comment"
+	 data-bind="mageInit: {'collapsible':{'openedState': '_active'}}">
+	<div class="payment-option-title field choice" data-role="title">
+		<span class="action action-toggle" id="block-discount-heading" role="heading" aria-level="2">
+			<!-- ko i18n: 'Order Comment'--><!-- /ko -->
+		</span>
+	</div>
+	<div class="payment-option-content" data-role="content">
+		<!-- ko template: 'ECInternet_OrderFeatures/checkout/order-comment-form-content' --><!-- /ko -->
+	</div>
+</div>
+<!-- /ko -->

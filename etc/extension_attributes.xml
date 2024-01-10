@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Api/etc/extension_attributes.xsd">
+	<extension_attributes for="Magento\Quote\Api\Data\PaymentInterface">
+		<attribute code="erp_terms" type="string" />
+		<attribute code="order_comment" type="string" />
+		<attribute code="po_number" type="string" />
+	</extension_attributes>
+
+	<extension_attributes for="Magento\Sales\Api\Data\OrderInterface">
+		<attribute code="erp_terms" type="string" />
+		<attribute code="external_order_reference" type="string" />
+		<attribute code="order_comment" type="string" />
+		<attribute code="placed_in_admin" type="string" />
+		<attribute code="po_number" type="string" />
+		<attribute code="ship_via" type="string" />
+		<attribute code="ship_via_desc" type="string" />
+	</extension_attributes>
+</config>

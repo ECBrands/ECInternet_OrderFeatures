@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*
+ * Copyright (C) EC Brands Corporation - All Rights Reserved
+ * Contact Licensing@ECInternet.com for use guidelines
+ */
+-->
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+	<argument name="data" xsi:type="array">
+		<item name="js_config" xsi:type="array">
+			<item name="provider" xsi:type="string">erpterms_form.erpterms_form_data_source</item>
+		</item>
+		<item name="label" xsi:type="string" translate="true">ERPTerm Information</item>
+		<item name="reverseMetadataMerge" xsi:type="boolean">true</item>
+	</argument>
+	<settings>
+		<buttons>
+			<button name="back" class="ECInternet\OrderFeatures\Block\Adminhtml\Erpterms\Edit\BackButton" />
+			<button name="delete" class="ECInternet\OrderFeatures\Block\Adminhtml\Erpterms\Edit\DeleteButton" />
+			<button name="save" class="ECInternet\OrderFeatures\Block\Adminhtml\Erpterms\Edit\SaveButton" />
+		</buttons>
+		<layout>
+			<type>tabs</type>
+		</layout>
+		<deps>
+			<dep>erpterms_form.erpterms_form_data_source</dep>
+		</deps>
+	</settings>
+
+	<!-- Define data source for form page -->
+	<dataSource name="erpterms_form_data_source">
+		<argument name="data" xsi:type="array">
+			<item name="js_config" xsi:type="array">
+				<item name="component" xsi:type="string">Magento_Ui/js/form/provider</item>
+			</item>
+		</argument>
+		<settings>
+			<submitUrl path="orderfeatures/erpterms/save" />
+		</settings>
+		<dataProvider class="ECInternet\OrderFeatures\Model\Erpterms\DataProvider" name="erpterms_form_data_source">
+			<settings>
+				<requestFieldName>id</requestFieldName>
+				<primaryFieldName>entity_id</primaryFieldName>
+			</settings>
+		</dataProvider>
+	</dataSource>
+
+	<fieldset name="erpterms">
+		<settings>
+			<label translate="true">ERPTerms Fieldset</label>
+		</settings>
+
+		<!-- Define 'id' input - This field represents form id and is hidden -->
+		<field name="id" sortOrder="10" formElement="hidden">
+			<settings>
+				<dataType>text</dataType>
+			</settings>
+		</field>
+
+		<!-- Define 'erp_terms' input -->
+		<field name="erp_terms" sortOrder="30" formElement="input">
+			<settings>
+				<validation>
+					<rule name="required-entry" xsi:type="boolean">true</rule>
+				</validation>
+				<dataType>text</dataType>
+				<label translate="true">ERP Term</label>
+			</settings>
+		</field>
+
+		<!-- Define 'is_active' input -->
+		<field name="is_active" sortOrder="40" formElement="checkbox">
+			<settings>
+				<dataType>boolean</dataType>
+				<label translate="true">Is Active?</label>
+			</settings>
+			<formElements>
+				<checkbox>
+					<settings>
+						<prefer>toggle</prefer>
+						<valueMap>
+							<map name="false" xsi:type="string">0</map>
+							<map name="true" xsi:type="string">1</map>
+						</valueMap>
+					</settings>
+				</checkbox>
+			</formElements>
+		</field>
+
+		<!-- Define 'erp_termsdesc' input -->
+		<field name="erp_termsdesc" sortOrder="50" formElement="input">
+			<argument name="data" xsi:type="array">
+				<item name="config" xsi:type="array">
+					<item name="source" xsi:type="string">erpterms</item>
+				</item>
+			</argument>
+			<settings>
+				<dataType>text</dataType>
+				<label translate="true">Description</label>
+			</settings>
+		</field>
+
+		<!-- Define 'po_requirement' input -->
+		<!--
+		<field name="po_requirement">
+			<argument name="data" xsi:type="array">
+				<item name="config" xsi:type="array">
+					<item name="label" xsi:type="string" translate="true">PO Requirement</item>
+					<item name="source" xsi:type="string">erpterms</item>
+				</item>
+			</argument>
+			<settings>
+				<dataType>number</dataType>
+				<visible>false</visible>
+			</settings>
+		</field>
+		-->
+
+		<!-- Define 'limit_terms' input -->
+		<!--
+		<field name="limit_terms">
+			<argument name="data" xsi:type="array">
+				<item name="config" xsi:type="array">
+					<item name="label" xsi:type="string" translate="true">Limit Terms?</item>
+					<item name="source" xsi:type="string">erpterms</item>
+				</item>
+			</argument>
+			<settings>
+				<dataType>number</dataType>
+				<visible>false</visible>
+			</settings>
+		</field>
+		-->
+	</fieldset>
+</form>

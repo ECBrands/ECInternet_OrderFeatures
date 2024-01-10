@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+	<default>
+		<order_features>
+			<general>
+				<enable>1</enable>
+			</general>
+		</order_features>
+		<payment>
+			<ecinternet_erpterms>
+				<title>ERPTerms</title>
+				<active>1</active>
+				<model>ECInternet\OrderFeatures\Model\Payment\Erpterms</model>
+				<order_status>pending</order_status>
+				<allowspecific>0</allowspecific>
+				<group>offline</group>
+			</ecinternet_erpterms>
+			<ecinternet_free>
+				<title>Free</title>
+				<active>1</active>
+				<model>ECInternet\OrderFeatures\Model\Payment\Free</model>
+				<order_status>pending</order_status>
+				<allowspecific>0</allowspecific>
+				<group>offline</group>
+				<can_use_checkout>0</can_use_checkout>
+				<can_use_internal>1</can_use_internal>
+			</ecinternet_free>
+		</payment>
+		<carriers>
+			<ecinternet_admin_only>
+				<active>1</active>
+				<sallowspecific>0</sallowspecific>
+				<model>ECInternet\OrderFeatures\Model\Carrier\AdminOnly</model>
+				<name>Admin-Only Shipping</name>
+				<price>0.00</price>
+				<title>Admin-Only Shipping</title>
+				<type>I</type>
+				<specificerrmsg>This shipping method is not available. To use this shipping method, please contact us.</specificerrmsg>
+			</ecinternet_admin_only>
+		</carriers>
+	</default>
+</config>

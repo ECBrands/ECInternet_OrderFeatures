@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+	<!-- Update order item and order header prices to 0 if free payment method chosen -->
+	<!-- Set 'erp_terms' on order -->
+	<!-- Set 'placed_in_admin' on order -->
+	<!-- TODO: Convert this to plugin as it modified values passed in the event -->
+	<event name="sales_order_save_before">
+		<observer name="ecinternet_orderfeatures-sales_order_save_before"
+		          instance="ECInternet\OrderFeatures\Observer\SalesOrderSaveBefore" />
+	</event>
+
+	<!-- Update order billing address to be Customer default billing address -->
+	<!-- TODO: Convert this to plugin as it modified values passed in the event -->
+	<event name="sales_order_place_after">
+		<observer name="ecinternet_orderfeatures-sales_order_place_after"
+				  instance="ECInternet\OrderFeatures\Observer\SalesOrderPlaceAfter" />
+	</event>
+
+	<!-- Add 'partially_shipped' / 'fully_shipped' order comment -->
+	<!-- TODO: Convert this to plugin as it modified values passed in the event -->
+	<event name="sales_order_shipment_save_after">
+		<observer name="ecinternet_orderfeatures-sales_order_shipment_save_after"
+		          instance="ECInternet\OrderFeatures\Observer\SalesOrderShipmentAfter" />
+	</event>
+</config>

@@ -1,0 +1,21 @@
+<?php
+/**
+ * Copyright (C) EC Brands Corporation - All Rights Reserved
+ * Contact Licensing@ECInternet.com for use guidelines
+ */
+declare(strict_types=1);
+?>
+
+<?php /** @var \Magento\Backend\Block\Template $block */ ?>
+<?php /** @var \Magento\Framework\Escaper $escaper */ ?>
+
+<?php /** @var \ECInternet\OrderFeatures\ViewModel\Order\View $viewModel */ ?>
+<?php $viewModel = $block->getData('view_model'); ?>
+
+    <th><?= $escaper->escapeHtml(__('ERP Terms')) ?></th>
+    <td><?= $escaper->escapeHtml($viewModel->getTerm()) ?></td>
+</tr>
+<tr>
+    <th><?= $escaper->escapeHtml(__('PO Number')) ?></th>
+    <td><?= $escaper->escapeHtml($viewModel->getPoNumber()) ?></td>
+</tr>

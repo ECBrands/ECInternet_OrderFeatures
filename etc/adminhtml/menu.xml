@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+	<menu>
+		<add id="ECInternet_OrderFeatures::menu"
+		     title="Order Features"
+		     translate="title"
+		     module="ECInternet_OrderFeatures"
+		     sortOrder="150"
+		     parent="ECInternet_Base::base"
+		     resource="ECInternet_OrderFeatures::menu" />
+
+		<add id="ECInternet_OrderFeatures::settings"
+		     title="Settings"
+		     translate="title"
+		     module="ECInternet_OrderFeatures"
+		     parent="ECInternet_OrderFeatures::menu"
+		     sortOrder="10"
+		     action="adminhtml/system_config/edit/section/order_features"
+		     resource="ECInternet_OrderFeatures::settings" />
+
+		<add id="ECInternet_OrderFeatures::erpterms"
+		     title="ERP Terms Management"
+		     translate="title"
+		     module="ECInternet_OrderFeatures"
+		     parent="ECInternet_OrderFeatures::menu"
+		     sortOrder="20"
+		     action="orderfeatures/erpterms/index"
+		     resource="ECInternet_OrderFeatures::erpterms" />
+	</menu>
+</config>

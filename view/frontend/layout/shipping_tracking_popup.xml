@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      layout="empty"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+	<body>
+		<!-- Add logo to top of page -->
+		<referenceContainer name="columns.top">
+			<block class="Magento\Theme\Block\Html\Header\Logo" name="logo" />
+		</referenceContainer>
+
+		<!-- Add to popup display -->
+		<referenceBlock name="shipping.tracking.popup" template="ECInternet_OrderFeatures::tracking/popup.phtml" />
+	</body>
+</page>

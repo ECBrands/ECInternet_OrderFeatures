@@ -1,0 +1,151 @@
+<listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+	<!-- Create dataset for the class constructor \Magento\Ui\Component\Listing -->
+	<argument name="data" xsi:type="array">
+		<item name="js_config" xsi:type="array">
+			<!-- Initiates dataSource -->
+			<item name="provider" xsi:type="string">erpterms_listing.erpterms_listing_data_source</item>
+		</item>
+	</argument>
+	<settings>
+		<!-- Takes values from <columns> tag below -->
+		<spinner>erpterms_data_columns</spinner>
+
+		<!-- Define buttons -->
+		<buttons>
+			<button name="add">
+				<url path="*/*/new" />
+				<class>primary</class>
+				<label translate="true">Add New ERP Term</label>
+			</button>
+		</buttons>
+		<deps>
+			<dep>erpterms_listing.erpterms_listing_data_source</dep>
+		</deps>
+	</settings>
+
+	<!-- Defines data source for listing page -->
+	<!-- Defines the component responsible for initializing the localStorage in the browser -->
+	<dataSource name="erpterms_listing_data_source" component="Magento_Ui/js/grid/provider">
+		<settings>
+			<storageConfig>
+				<!-- indexField: primary index column name from our database table -->
+				<param name="indexField" xsi:type="string">entity_id</param>
+			</storageConfig>
+			<updateUrl path="mui/index/render" />
+		</settings>
+
+		<!-- Defines PHP class responsible for how UI component processes data on server -->
+		<dataProvider class="ErptermsGridDataProvider" name="erpterms_listing_data_source">
+			<settings>
+				<!-- Name of the request parameter, enabled AJAX URL used by the grid -->
+				<requestFieldName>entity_id</requestFieldName>
+
+				<!-- Name of the main index (primary column) in our database table -->
+				<primaryFieldName>entity_id</primaryFieldName>
+			</settings>
+		</dataProvider>
+	</dataSource>
+
+	<!-- Defines the element which contains Filters, Bookmarks, Column editor, Full-text search, and Mass Actions -->
+	<listingToolbar name="listing_top">
+		<!-- Locks the upper menu and makes it follow the user's scrolling -->
+		<settings>
+			<sticky>true</sticky>
+		</settings>
+
+		<!-- Used for remembering current state of view like applied filters, pagination, visible columns, etc -->
+		<bookmark name="bookmarks" />
+
+		<!-- Displays a special selector which allows the user to select which columns of our table should be presented or not -->
+		<columnsControls name="columns_controls" />
+
+		<!-- Add a full-text search. This enabled "Search by keyword" -->
+		<filterSearch name="fulltext" />
+
+		<!-- Add pagination -->
+		<paging name="listing_paging" />
+
+		<!-- Add filters for searching by specific fields -->
+		<filters name="listing_filters" />
+	</listingToolbar>
+
+	<!-- Define listing 'columns' -->
+	<columns name="erpterms_data_columns">
+		<column name="entity_id" sortOrder="10">
+			<settings>
+				<filter>textRange</filter>
+				<dataType>number</dataType>
+				<label translate="true">ID</label>
+				<sorting>asc</sorting>
+			</settings>
+		</column>
+
+		<!--
+		<column name="store_id" sortOrder="20">
+			<settings>
+				<filter>text</filter>
+				<dataType>number</dataType>
+				<label translate="true">Store ID</label>
+			</settings>
+		</column>
+		-->
+
+		<column name="erp_terms" sortOrder="30">
+			<settings>
+				<filter>text</filter>
+				<dataType>text</dataType>
+				<label translate="true">ERP Term Code</label>
+			</settings>
+		</column>
+
+		<column name="is_active" sortOrder="40">
+			<settings>
+				<filter>text</filter>
+				<dataType>text</dataType>
+				<label translate="true">Is Active?</label>
+			</settings>
+		</column>
+
+		<column name="erp_termsdesc" sortOrder="50">
+			<settings>
+				<filter>text</filter>
+				<dataType>text</dataType>
+				<label translate="true">Description</label>
+			</settings>
+		</column>
+
+		<!-- Define 'po_requirement' column -->
+		<!--
+		<column name="po_requirement" sortOrder="60">
+			<settings>
+				<filter>text</filter>
+				<dataType>number</dataType>
+				<label translate="true">PO Requirement</label>
+			</settings>
+			<argument name="data" xsi:type="array">
+		</column>
+		-->
+
+		<!-- Define 'limit_terms' column -->
+		<!--
+		<column name="limit_terms" sortOrder="70">
+			<settings>
+				<filter>text</filter>
+				<dataType>number</dataType>
+				<label translate="true">Limit Terms</label>
+			</settings>
+		</column>
+		-->
+
+		<!-- Define 'actionColumn' -->
+		<actionsColumn name="actions" class="ECInternet\OrderFeatures\Ui\Component\Listing\Column\ErptermActions">
+			<argument name="data" xsi:type="array">
+				<item name="config" xsi:type="array">
+					<item name="indexField" xsi:type="string">entity_id</item>
+					<item name="urlEntityParamName" xsi:type="string">id</item>
+				</item>
+			</argument>
+		</actionsColumn>
+	</columns>
+</listing>

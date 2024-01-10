@@ -1,0 +1,96 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+declare(strict_types=1);
+
+/** @noinspection PhpFullyQualifiedNameUsageInspection */
+
+// phpcs:disable Magento2.Templates.ThisInTemplate
+
+/** @var $block \Magento\Sales\Block\Order\Recent */
+/** @var \Magento\Framework\Escaper $escaper */
+
+?>
+<div class="block block-dashboard-orders">
+    <?php
+    $_orders = $block->getData('orders');
+    $count = count($_orders);
+    ?>
+    <div class="block-title order">
+        <strong><?= $escaper->escapeHtml(__('Recent Orders')) ?></strong>
+        <?php if ($count > 0): ?>
+            <a class="action view" href="<?= $escaper->escapeUrl($block->getUrl('sales/order/history')) ?>">
+                <span><?= $escaper->escapeHtml(__('View All')) ?></span>
+            </a>
+        <?php endif; ?>
+    </div>
+    <div class="block-content">
+        <?= $block->getChildHtml() ?>
+        <?php if ($count > 0): ?>
+            <div class="table-wrapper orders-recent">
+                <table class="data table table-order-items recent" id="my-orders-table">
+                    <caption class="table-caption"><?= $escaper->escapeHtml(__('Recent Orders')) ?></caption>
+                    <thead>
+                        <tr>
+                            <th scope="col" class="col id"><?= $escaper->escapeHtml(__('Order #')) ?></th>
+                            <th scope="col" class="col date"><?= $escaper->escapeHtml(__('Date')) ?></th>
+                            <th scope="col" class="col shipping"><?= $escaper->escapeHtml(__('Ship To')) ?></th>
+                            <th scope="col" class="col total"><?= $escaper->escapeHtml(__('Order Total')) ?></th>
+                            <th scope="col" class="col status"><?= $escaper->escapeHtml(__('Status')) ?></th>
+                            <th scope="col" class="col actions"><?= $escaper->escapeHtml(__('Action')) ?></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <?php /** @var \Magento\Sales\Model\Order $_order */?>
+                    <?php foreach ($_orders as $_order): ?>
+                        <tr>
+                            <td data-th="<?= $escaper->escapeHtml(__('Order #')) ?>" class="col id"><?= $escaper->escapeHtml($_order->getRealOrderId()) ?></td>
+                            <td data-th="<?= $escaper->escapeHtml(__('Date')) ?>" class="col date"><?= $escaper->escapeHtml($block->formatDate($_order->getCreatedAt())) ?></td>
+                            <td data-th="<?= $escaper->escapeHtml(__('Ship To')) ?>" class="col shipping"><?= $_order->getShippingAddress() ? $escaper->escapeHtml($_order->getShippingAddress()->getName()) : '&nbsp;' ?></td>
+                            <td data-th="<?= $escaper->escapeHtml(__('Order Total')) ?>" class="col total"><?= /* @noEscape */ $_order->formatPrice($_order->getGrandTotal()) ?></td>
+                            <td data-th="<?= $escaper->escapeHtml(__('Status')) ?>" class="col status"><?= $escaper->escapeHtml($_order->getStatusLabel()) ?></td>
+                            <td data-th="<?= $escaper->escapeHtml(__('Actions')) ?>" class="col actions">
+                                <a href="<?= $escaper->escapeUrl($block->getViewUrl($_order)) ?>" class="action view">
+                                    <span><?= $escaper->escapeHtml(__('View Order')) ?></span>
+                                </a>
+
+                                <?php if ($_order->getShipmentsCollection()->getSize()) { ?>
+                                <a href="#"
+                                   data-mage-init='{"popupWindow": {
+                                        "windowURL":"<?= $escaper->escapeUrl($this->helper(Magento\Shipping\Helper\Data::class)->getTrackingPopupUrlBySalesModel($_order)) ?>",
+                                        "windowName":"trackorder",
+                                        "width":800,
+                                        "height":600,
+                                        "top":0,
+                                        "left":0,
+                                        "resizable":1,
+                                        "scrollbars":1}}'
+                                   title="<?= $escaper->escapeHtmlAttr(__('Track')) ?>"
+                                   class="action track">
+                                        <span><?= $escaper->escapeHtml(__('Track')) ?></span>
+                                </a>
+                                <?php } ?>
+
+                                <?php if ($this->helper(\Magento\Sales\Helper\Reorder::class)
+                                    ->canReorder($_order->getEntityId())
+                                ): ?>
+                                    <a href="#" data-post='<?= /* @noEscape */
+                                    $this->helper(\Magento\Framework\Data\Helper\PostHelper::class)
+                                        ->getPostData($block->getReorderUrl($_order))
+                                    ?>' class="action order">
+                                        <span><?= $escaper->escapeHtml(__('Reorder')) ?></span>
+                                    </a>
+                                <?php endif ?>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        <?php else: ?>
+            <div class="message info empty"><span><?= $escaper->escapeHtml(__('You have placed no orders.')) ?></span></div>
+        <?php endif; ?>
+    </div>
+</div>
