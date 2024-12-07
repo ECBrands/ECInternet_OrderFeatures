@@ -18,41 +18,41 @@ use Magento\Sales\Model\Order;
  */
 class Data extends AbstractHelper
 {
-    private const CONFIG_PATH_ENABLED                = 'order_features/general/enable';
+    private const CONFIG_PATH_ENABLED               = 'order_features/general/enable';
 
-    private const CONFIG_PATH_CLEAR_TOTALS           = 'order_features/checkout/clear_totals';
+    private const CONFIG_PATH_CLEAR_TOTALS          = 'order_features/checkout/clear_totals';
 
-    private const CONFIG_PATH_HIDE_BILLING           = 'order_features/checkout/hide_billing';
+    private const CONFIG_PATH_HIDE_BILLING          = 'order_features/checkout/hide_billing';
 
-    private const CONFIG_PATH_SHOW_COMMENT           = 'order_features/checkout/show_comment';
+    private const CONFIG_PATH_SHOW_COMMENT          = 'order_features/checkout/show_comment';
 
-    private const CONFIG_PATH_SHOW_PONUMBER          = 'order_features/checkout/show_ponumber';
+    private const CONFIG_PATH_SHOW_PONUMBER         = 'order_features/checkout/show_ponumber';
 
-    private const CONFIG_PATH_PAYMENT_BILLING        = 'order_features/checkout/payment_billing';
+    private const CONFIG_PATH_PAYMENT_BILLING       = 'order_features/checkout/payment_billing';
 
-    private const CONFIG_PATH_SKIPPABLE_SKUS         = 'order_features/shipments/skippable_skus';
+    private const CONFIG_PATH_SKIPPABLE_SKUS        = 'order_features/shipments/skippable_skus';
 
-    private const CONFIG_PATH_STORE_PICKUP           = 'order_features/shipments/store_pickups_to_trigger';
+    private const CONFIG_PATH_STORE_PICKUP          = 'order_features/shipments/store_pickups_to_trigger';
 
-    private const CONFIG_PATH_MARK_AS_COMPLETE       = 'order_features/shipments/mark_order_complete';
+    private const CONFIG_PATH_MARK_AS_COMPLETE      = 'order_features/shipments/mark_order_complete';
 
-    private const PAYMENT_ADDRESS_TYPE               = 'payment';
+    private const PAYMENT_ADDRESS_TYPE              = 'payment';
 
-    public const ATTRIBUTE_ERP_TERMS                 = 'erp_terms';
+    public const ATTRIBUTE_ERP_TERMS                = 'erp_terms';
 
-    public const ATTRIBUTE_EXTERNAL_ORDER_REFERENCE  = 'external_order_reference';
+    public const ATTRIBUTE_EXTERNAL_ORDER_REFERENCE = 'external_order_reference';
 
-    public const ATTRIBUTE_ORDER_COMMENT             = 'order_comment';
+    public const ATTRIBUTE_ORDER_COMMENT            = 'order_comment';
 
-    public const ATTRIBUTE_PLACED_IN_ADMIN           = 'placed_in_admin';
+    public const ATTRIBUTE_PLACED_IN_ADMIN          = 'placed_in_admin';
 
-    public const ATTRIBUTE_PO_NUMBER                 = 'po_number';
+    public const ATTRIBUTE_PO_NUMBER                = 'po_number';
 
-    public const ATTRIBUTE_SHIP_VIA                  = 'ship_via';
+    public const ATTRIBUTE_SHIP_VIA                 = 'ship_via';
 
-    public const ATTRIBUTE_SHIP_VIA_CODE             = 'ship_via_code';
+    public const ATTRIBUTE_SHIP_VIA_CODE            = 'ship_via_code';
 
-    public const ATTRIBUTE_SHIP_VIA_DESC             = 'ship_via_desc';
+    public const ATTRIBUTE_SHIP_VIA_DESC            = 'ship_via_desc';
 
     /**
      * @var \Magento\Customer\Model\Session

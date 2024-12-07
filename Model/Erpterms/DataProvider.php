@@ -21,12 +21,14 @@ class DataProvider extends AbstractDataProvider
     /**
      * @var \Magento\Framework\App\RequestInterface
      */
-    private $_request;
+    private $request;
 
     /**
      * @var \ECInternet\OrderFeatures\Api\ErptermsRepositoryInterface
      */
-    private $_erptermsRepository;
+    private $erptermsRepository;
+
+    private $loadedData;
 
     /**
      * DataProvider constructor.
@@ -50,9 +52,9 @@ class DataProvider extends AbstractDataProvider
         array $meta = [],
         array $data = []
     ) {
-        $this->_request            = $request;
-        $this->_erptermsRepository = $erptermsRepository;
-        $this->collection          = $erptermsCollectionFactory->create();
+        $this->request            = $request;
+        $this->erptermsRepository = $erptermsRepository;
+        $this->collection         = $erptermsCollectionFactory->create();
         $this->collection->addFieldToSelect('*');
 
         parent::__construct($name, $primaryFieldName, $requestFieldName, $meta, $data);
@@ -71,7 +73,7 @@ class DataProvider extends AbstractDataProvider
 
         $this->loadedData = [];
 
-        if ($requestId = $this->_request->getParam($this->requestFieldName)) {
+        if ($requestId = $this->request->getParam($this->requestFieldName)) {
             /** @var \ECInternet\OrderFeatures\Api\Data\ErptermsInterface|null $erpterm */
             if ($erpterm = $this->getErpterms((int)$requestId)) {
                 $this->loadedData[$erpterm->getId()]['erpterms'] = $erpterm->getData();
@@ -91,7 +93,7 @@ class DataProvider extends AbstractDataProvider
     private function getErpterms(int $erptermsId)
     {
         try {
-            return $this->_erptermsRepository->getById($erptermsId);
+            return $this->erptermsRepository->getById($erptermsId);
         } catch (Exception $e) {
             error_log($e->getMessage());
         }
