@@ -16,7 +16,7 @@ use ECInternet\OrderFeatures\Api\Data\ErptermsInterface;
  */
 class Erpterms extends AbstractModel implements IdentityInterface, ErptermsInterface
 {
-    const CACHE_TAG = 'ecinternet_orderfeatures_erpterms';
+    private const CACHE_TAG = 'ecinternet_orderfeatures_erpterms';
 
     protected $_cacheTag    = 'ecinternet_orderfeatures_erpterms';
 
