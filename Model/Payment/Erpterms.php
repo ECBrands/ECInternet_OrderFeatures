@@ -32,15 +32,15 @@ use ECInternet\OrderFeatures\Model\ResourceModel\Erpterms\CollectionFactory as E
  */
 class Erpterms extends AbstractMethod
 {
-    const CODE                          = 'ecinternet_erpterms';
+    public const CODE                          = 'ecinternet_erpterms';
 
-    const DEFAULT_TITLE                 = 'ERPTerms';
+    public const DEFAULT_TITLE                 = 'ERPTerms';
 
-    const CONFIG_PATH_TITLE             = 'payment/ecinternet_erpterms/title';
+    public const CONFIG_PATH_TITLE             = 'payment/ecinternet_erpterms/title';
 
-    const CONFIG_PATH_ALLOWED_GROUPS    = 'payment/ecinternet_erpterms/allowed_groups';
+    public const CONFIG_PATH_ALLOWED_GROUPS    = 'payment/ecinternet_erpterms/allowed_groups';
 
-    const CONFIG_PATH_DEFAULT_TERM_NAME = 'payment/ecinternet_erpterms/default_term_name';
+    public const CONFIG_PATH_DEFAULT_TERM_NAME = 'payment/ecinternet_erpterms/default_term_name';
 
     /**
      * @var string
