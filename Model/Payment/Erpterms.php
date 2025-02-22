@@ -7,7 +7,6 @@ declare(strict_types=1);
 
 namespace ECInternet\OrderFeatures\Model\Payment;
 
-use Magento\Backend\Model\Session\Quote as AdminQuoteSession;
 use Magento\Customer\Model\Session as CustomerSession;
 use Magento\Directory\Helper\Data as DirectoryHelper;
 use Magento\Framework\Api\AttributeValueFactory;
@@ -63,11 +62,6 @@ class Erpterms extends AbstractMethod
     protected $_canCapture = true;
 
     /**
-     * @var \Magento\Backend\Model\Session\Quote
-     */
-    private $_adminQuoteSession;
-
-    /**
      * @var \Magento\Customer\Model\Session
      */
     private $_customerSession;
@@ -97,7 +91,6 @@ class Erpterms extends AbstractMethod
      * @param \Magento\Payment\Helper\Data                                             $paymentHelper
      * @param \Magento\Framework\App\Config\ScopeConfigInterface                       $scopeConfig
      * @param \Magento\Payment\Model\Method\Logger                                     $logger
-     * @param \Magento\Backend\Model\Session\Quote                                     $adminQuoteSession
      * @param \Magento\Customer\Model\Session                                          $customerSession
      * @param \Magento\Store\Model\StoreManagerInterface                               $storeManager
      * @param \ECInternet\OrderFeatures\Helper\Data                                    $helper
@@ -116,7 +109,6 @@ class Erpterms extends AbstractMethod
         PaymentHelper $paymentHelper,
         ScopeConfigInterface $scopeConfig,
         Logger $logger,
-        AdminQuoteSession $adminQuoteSession,
         CustomerSession $customerSession,
         StoreManagerInterface $storeManager,
         Data $helper,
@@ -141,7 +133,6 @@ class Erpterms extends AbstractMethod
             $directory
         );
 
-        $this->_adminQuoteSession         = $adminQuoteSession;
         $this->_customerSession           = $customerSession;
         $this->_storeManager              = $storeManager;
         $this->_helper                    = $helper;
@@ -342,16 +333,6 @@ class Erpterms extends AbstractMethod
      */
     private function getCustomerERPTerms()
     {
-        if ($adminQuote = $this->_adminQuoteSession->getQuote()) {
-            if ($adminCustomer = $adminQuote->getCustomer()) {
-                if ($termAttribute = $adminCustomer->getCustomAttribute(Data::ATTRIBUTE_ERP_TERMS)) {
-                    if ($termValue = $termAttribute->getValue()) {
-                        return $this->uppercaseTrim((string)$termValue);
-                    }
-                }
-            }
-        }
-
         if ($customer = $this->_customerSession->getCustomer()) {
             if ($customerErpTermsValue = $customer->getData(Data::ATTRIBUTE_ERP_TERMS)) {
                 return $this->uppercaseTrim((string)$customerErpTermsValue);
