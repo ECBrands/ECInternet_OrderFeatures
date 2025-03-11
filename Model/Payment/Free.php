@@ -29,7 +29,7 @@ use ECInternet\OrderFeatures\Logger\Logger as OrderFeaturesLogger;
  */
 class Free extends AbstractMethod
 {
-    const CODE = 'ecinternet_free';
+    public const CODE = 'ecinternet_free';
 
     /**
      * @var string

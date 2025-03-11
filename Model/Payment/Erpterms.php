@@ -7,7 +7,6 @@ declare(strict_types=1);
 
 namespace ECInternet\OrderFeatures\Model\Payment;
 
-use Magento\Backend\Model\Session\Quote as AdminQuoteSession;
 use Magento\Customer\Model\Session as CustomerSession;
 use Magento\Directory\Helper\Data as DirectoryHelper;
 use Magento\Framework\Api\AttributeValueFactory;
@@ -32,15 +31,15 @@ use ECInternet\OrderFeatures\Model\ResourceModel\Erpterms\CollectionFactory as E
  */
 class Erpterms extends AbstractMethod
 {
-    const CODE                          = 'ecinternet_erpterms';
+    public const CODE                          = 'ecinternet_erpterms';
 
-    const DEFAULT_TITLE                 = 'ERPTerms';
+    public const DEFAULT_TITLE                 = 'ERPTerms';
 
-    const CONFIG_PATH_TITLE             = 'payment/ecinternet_erpterms/title';
+    public const CONFIG_PATH_TITLE             = 'payment/ecinternet_erpterms/title';
 
-    const CONFIG_PATH_ALLOWED_GROUPS    = 'payment/ecinternet_erpterms/allowed_groups';
+    public const CONFIG_PATH_ALLOWED_GROUPS    = 'payment/ecinternet_erpterms/allowed_groups';
 
-    const CONFIG_PATH_DEFAULT_TERM_NAME = 'payment/ecinternet_erpterms/default_term_name';
+    public const CONFIG_PATH_DEFAULT_TERM_NAME = 'payment/ecinternet_erpterms/default_term_name';
 
     /**
      * @var string
@@ -61,11 +60,6 @@ class Erpterms extends AbstractMethod
      * @var bool
      */
     protected $_canCapture = true;
-
-    /**
-     * @var \Magento\Backend\Model\Session\Quote
-     */
-    private $_adminQuoteSession;
 
     /**
      * @var \Magento\Customer\Model\Session
@@ -97,7 +91,6 @@ class Erpterms extends AbstractMethod
      * @param \Magento\Payment\Helper\Data                                             $paymentHelper
      * @param \Magento\Framework\App\Config\ScopeConfigInterface                       $scopeConfig
      * @param \Magento\Payment\Model\Method\Logger                                     $logger
-     * @param \Magento\Backend\Model\Session\Quote                                     $adminQuoteSession
      * @param \Magento\Customer\Model\Session                                          $customerSession
      * @param \Magento\Store\Model\StoreManagerInterface                               $storeManager
      * @param \ECInternet\OrderFeatures\Helper\Data                                    $helper
@@ -116,7 +109,6 @@ class Erpterms extends AbstractMethod
         PaymentHelper $paymentHelper,
         ScopeConfigInterface $scopeConfig,
         Logger $logger,
-        AdminQuoteSession $adminQuoteSession,
         CustomerSession $customerSession,
         StoreManagerInterface $storeManager,
         Data $helper,
@@ -141,7 +133,6 @@ class Erpterms extends AbstractMethod
             $directory
         );
 
-        $this->_adminQuoteSession         = $adminQuoteSession;
         $this->_customerSession           = $customerSession;
         $this->_storeManager              = $storeManager;
         $this->_helper                    = $helper;
@@ -342,16 +333,6 @@ class Erpterms extends AbstractMethod
      */
     private function getCustomerERPTerms()
     {
-        if ($adminQuote = $this->_adminQuoteSession->getQuote()) {
-            if ($adminCustomer = $adminQuote->getCustomer()) {
-                if ($termAttribute = $adminCustomer->getCustomAttribute(Data::ATTRIBUTE_ERP_TERMS)) {
-                    if ($termValue = $termAttribute->getValue()) {
-                        return $this->uppercaseTrim((string)$termValue);
-                    }
-                }
-            }
-        }
-
         if ($customer = $this->_customerSession->getCustomer()) {
             if ($customerErpTermsValue = $customer->getData(Data::ATTRIBUTE_ERP_TERMS)) {
                 return $this->uppercaseTrim((string)$customerErpTermsValue);

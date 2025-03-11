@@ -17,12 +17,12 @@ use Magento\Ui\Component\Listing\Columns\Column;
  */
 class ErptermActions extends Column
 {
-    const URL_PATH_EDIT = 'orderfeatures/erpterms/edit';
+    private const URL_PATH_EDIT = 'orderfeatures/erpterms/edit';
 
     /**
      * @var \Magento\Framework\UrlInterface
      */
-    private $_urlBuilder;
+    private $urlBuilder;
 
     /**
      * ErptermActions constructor.
@@ -42,7 +42,7 @@ class ErptermActions extends Column
     ) {
         parent::__construct($context, $uiComponentFactory, $components, $data);
 
-        $this->_urlBuilder = $urlBuilder;
+        $this->urlBuilder = $urlBuilder;
     }
 
     /**
@@ -59,7 +59,7 @@ class ErptermActions extends Column
                 $name = $this->getData('name');
                 if (isset($item['entity_id'])) {
                     $item[$name]['edit'] = [
-                        'href' => $this->_urlBuilder->getUrl(
+                        'href' => $this->urlBuilder->getUrl(
                             self::URL_PATH_EDIT,
                             ['id' => $item['entity_id']]
                         ),
