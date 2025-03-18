@@ -349,21 +349,11 @@ class Erpterms extends AbstractMethod
      */
     private function getCustomerGroupId()
     {
-        $customerGroupId = null;
-
-        if ($adminQuote = $this->_adminQuoteSession->getQuote()) {
-            if ($adminCustomer = $adminQuote->getCustomer()) {
-                $customerGroupId = $adminCustomer->getGroupId();
-            }
+        if ($customer = $this->_customerSession->getCustomer()) {
+            return $customer->getGroupId();
         }
 
-        if ($customerGroupId === null) {
-            if ($customer = $this->_customerSession->getCustomer()) {
-                $customerGroupId = $customer->getGroupId();
-            }
-        }
-
-        return $customerGroupId;
+        return null;
     }
 
     /**
