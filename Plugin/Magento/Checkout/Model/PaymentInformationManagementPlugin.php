@@ -22,7 +22,7 @@ class PaymentInformationManagementPlugin
     /**
      * @var \Magento\Sales\Api\OrderRepositoryInterface
      */
-    private $_orderRepository;
+    private $orderRepository;
 
     /**
      * PaymentInformationManagementPlugin constructor.
@@ -32,7 +32,7 @@ class PaymentInformationManagementPlugin
     public function __construct(
         OrderRepositoryInterface $orderRepository
     ) {
-        $this->_orderRepository = $orderRepository;
+        $this->orderRepository = $orderRepository;
     }
 
     /**
@@ -62,14 +62,14 @@ class PaymentInformationManagementPlugin
                     $poNumber     = $paymentExtensionAttributes->getPoNumber();
 
                     /** @var \Magento\Sales\Api\Data\OrderInterface $order */
-                    $order = $this->_orderRepository->get($result);
+                    $order = $this->orderRepository->get($result);
 
                     // Set attribute values on Order
                     $order->setData(Data::ATTRIBUTE_ORDER_COMMENT, $orderComment);
                     $order->setData(Data::ATTRIBUTE_PO_NUMBER, $poNumber);
 
                     // Save order
-                    $this->_orderRepository->save($order);
+                    $this->orderRepository->save($order);
                 }
             }
         }
