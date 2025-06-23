@@ -52,6 +52,11 @@ class Free extends AbstractMethod
     protected $_canCapture = true;
 
     /**
+     * @var \ECInternet\OrderFeatures\Logger\Logger
+     */
+    protected $_logger;
+
+    /**
      * @var bool
      */
     protected $_canCapturePartial = true;
@@ -64,7 +69,7 @@ class Free extends AbstractMethod
     /**
      * @var \Magento\Backend\Model\Auth\Session
      */
-    private $_authSession;
+    private $authSession;
 
     /**
      * @var \ECInternet\OrderFeatures\Model\Config
@@ -119,8 +124,8 @@ class Free extends AbstractMethod
             $directory
         );
 
-        $this->_authSession = $authSession;
         $this->_logger      = $orderFeaturesLogger;
+        $this->authSession  = $authSession;
         $this->config       = $config;
     }
 
@@ -199,7 +204,7 @@ class Free extends AbstractMethod
         }
 
         // Admin only
-        return $this->_authSession->isLoggedIn();
+        return $this->authSession->isLoggedIn();
     }
 
     /**

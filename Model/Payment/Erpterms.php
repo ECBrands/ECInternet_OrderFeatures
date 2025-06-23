@@ -62,9 +62,14 @@ class Erpterms extends AbstractMethod
     protected $_canCapture = true;
 
     /**
+     * @var \ECInternet\OrderFeatures\Logger\Logger
+     */
+    protected $_logger;
+
+    /**
      * @var \Magento\Customer\Model\Session
      */
-    private $_customerSession;
+    private $customerSession;
 
     /**
      * @var \ECInternet\OrderFeatures\Model\Config
@@ -74,7 +79,7 @@ class Erpterms extends AbstractMethod
     /**
      * @var \ECInternet\OrderFeatures\Model\ResourceModel\Erpterms\CollectionFactory
      */
-    private $_erptermsCollectionFactory;
+    private $erptermsCollectionFactory;
 
     /**
      * Erpterms constructor.
@@ -87,8 +92,8 @@ class Erpterms extends AbstractMethod
      * @param \Magento\Framework\App\Config\ScopeConfigInterface                       $scopeConfig
      * @param \Magento\Payment\Model\Method\Logger                                     $logger
      * @param \Magento\Customer\Model\Session                                          $customerSession
-     * @param \ECInternet\OrderFeatures\Model\Config                                   $config
      * @param \ECInternet\OrderFeatures\Logger\Logger                                  $orderFeaturesLogger
+     * @param \ECInternet\OrderFeatures\Model\Config $config
      * @param \ECInternet\OrderFeatures\Model\ResourceModel\Erpterms\CollectionFactory $erptermsCollection
      * @param \Magento\Framework\Model\ResourceModel\AbstractResource|null             $resource
      * @param \Magento\Framework\Data\Collection\AbstractDb|null                       $resourceCollection
@@ -104,8 +109,8 @@ class Erpterms extends AbstractMethod
         ScopeConfigInterface $scopeConfig,
         Logger $logger,
         CustomerSession $customerSession,
-        Config $config,
         OrderFeaturesLogger $orderFeaturesLogger,
+        Config $config,
         ErptermsCollection $erptermsCollection,
         AbstractResource $resource = null,
         AbstractDb $resourceCollection = null,
@@ -126,10 +131,10 @@ class Erpterms extends AbstractMethod
             $directory
         );
 
-        $this->_customerSession           = $customerSession;
-        $this->config                     = $config;
-        $this->_logger                    = $orderFeaturesLogger;
-        $this->_erptermsCollectionFactory = $erptermsCollection;
+        $this->_logger                   = $orderFeaturesLogger;
+        $this->customerSession           = $customerSession;
+        $this->config                    = $config;
+        $this->erptermsCollectionFactory = $erptermsCollection;
     }
 
     /**
@@ -195,7 +200,6 @@ class Erpterms extends AbstractMethod
      * This MUST return a value or Magento Cloud throws an exception
      *
      * @return mixed|string
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     public function getTitle()
     {
@@ -218,7 +222,7 @@ class Erpterms extends AbstractMethod
         $terms = $this->getCustomerERPTerms();
         if (!empty($terms)) {
             /** @var \ECInternet\OrderFeatures\Model\ResourceModel\Erpterms\Collection $termsCollection */
-            $termsCollection = $this->_erptermsCollectionFactory->create()
+            $termsCollection = $this->erptermsCollectionFactory->create()
                 ->addFieldToFilter(\ECInternet\OrderFeatures\Model\Erpterms::COLUMN_ERP_TERMS, ['eq' => $terms])
                 ->addFieldToFilter(\ECInternet\OrderFeatures\Model\Erpterms::COLUMN_IS_ACTIVE, ['eq' => 1]);
 
@@ -248,7 +252,6 @@ class Erpterms extends AbstractMethod
 
         if (!$this->config->isModuleEnabled()) {
             $this->log('isAvailable() - Module is not enabled.');
-
             return false;
         }
 
@@ -308,7 +311,7 @@ class Erpterms extends AbstractMethod
     private function getAllowedErpterms()
     {
         /** @var \ECInternet\OrderFeatures\Model\ResourceModel\Erpterms\Collection $termCollection */
-        $termCollection = $this->_erptermsCollectionFactory->create()
+        $termCollection = $this->erptermsCollectionFactory->create()
             ->addFieldToFilter(\ECInternet\OrderFeatures\Model\Erpterms::COLUMN_IS_ACTIVE, ['eq' => 1]);
 
         return $this->uppercaseTrimArray($termCollection->getColumnValues(Data::ATTRIBUTE_ERP_TERMS));
@@ -321,7 +324,7 @@ class Erpterms extends AbstractMethod
      */
     private function getCustomerERPTerms()
     {
-        if ($customer = $this->_customerSession->getCustomer()) {
+        if ($customer = $this->customerSession->getCustomer()) {
             if ($customerErpTermsValue = $customer->getData(Data::ATTRIBUTE_ERP_TERMS)) {
                 return $this->uppercaseTrim((string)$customerErpTermsValue);
             }
@@ -337,7 +340,7 @@ class Erpterms extends AbstractMethod
      */
     private function getCustomerGroupId()
     {
-        if ($customer = $this->_customerSession->getCustomer()) {
+        if ($customer = $this->customerSession->getCustomer()) {
             return $customer->getGroupId();
         }
 
@@ -373,6 +376,8 @@ class Erpterms extends AbstractMethod
      *
      * @param string $message
      * @param array  $extra
+     *
+     * @return void
      */
     private function log(string $message, array $extra = [])
     {
