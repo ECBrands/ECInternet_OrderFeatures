@@ -22,6 +22,6 @@ class NewAction extends Erpterms implements HttpGetActionInterface
      */
     public function execute()
     {
-        return $this->_resultForwardFactory->create()->forward('edit');
+        return $this->resultForwardFactory->create()->forward('edit');
     }
 }

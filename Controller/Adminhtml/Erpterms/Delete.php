@@ -35,7 +35,7 @@ class Delete extends Erpterms implements HttpPostActionInterface
                 $this->messageManager->addErrorMessage(__('This term no longer exists.'));
             } else {
                 try {
-                    $this->_erptermsRepository->delete($term);
+                    $this->erptermsRepository->delete($term);
                     $this->messageManager->addSuccessMessage(__('The term has been deleted.'));
                 } catch (Exception $e) {
                     $this->messageManager->addErrorMessage($e->getMessage());
