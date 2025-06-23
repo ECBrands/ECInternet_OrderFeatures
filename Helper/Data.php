@@ -8,8 +8,6 @@ declare(strict_types=1);
 namespace ECInternet\OrderFeatures\Helper;
 
 use Magento\Framework\App\Helper\AbstractHelper;
-use Magento\Sales\Api\Data\OrderAddressInterface;
-use Magento\Sales\Model\Order;
 
 /**
  * Helper
@@ -27,8 +25,6 @@ class Data extends AbstractHelper
     public const ATTRIBUTE_PO_NUMBER                = 'po_number';
 
     public const ATTRIBUTE_SHIP_VIA                 = 'ship_via';
-
-    public const ATTRIBUTE_SHIP_VIA_CODE            = 'ship_via_code';
 
     public const ATTRIBUTE_SHIP_VIA_DESC            = 'ship_via_desc';
 
