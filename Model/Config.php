@@ -7,6 +7,8 @@ declare(strict_types=1);
 
 namespace ECInternet\OrderFeatures\Model;
 
+use Magento\Framework\App\Config\ScopeConfigInterface;
+
 class Config
 {
     private const CONFIG_PATH_ENABLED          = 'order_features/general/enable';
