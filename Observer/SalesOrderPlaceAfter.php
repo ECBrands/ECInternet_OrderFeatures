@@ -11,8 +11,9 @@ use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Quote\Model\Quote\AddressFactory as QuoteAddressFactory;
 use Magento\Quote\Model\Quote\Address\ToOrderAddress;
+use Magento\Sales\Api\Data\OrderAddressInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
-use ECInternet\OrderFeatures\Helper\Data;
+use Magento\Sales\Model\Order;
 use ECInternet\OrderFeatures\Model\Config;
 
 /**
@@ -20,6 +21,8 @@ use ECInternet\OrderFeatures\Model\Config;
  */
 class SalesOrderPlaceAfter implements ObserverInterface
 {
+    private const PAYMENT_ADDRESS_TYPE = 'payment';
+
     /**
      * @var \Magento\Quote\Model\Quote\AddressFactory
      */
@@ -36,11 +39,6 @@ class SalesOrderPlaceAfter implements ObserverInterface
     private $orderRepository;
 
     /**
-     * @var \ECInternet\OrderFeatures\Helper\Data
-     */
-    private $helper;
-
-    /**
      * @var \ECInternet\OrderFeatures\Model\Config
      */
     private $config;
@@ -51,20 +49,17 @@ class SalesOrderPlaceAfter implements ObserverInterface
      * @param \Magento\Quote\Model\Quote\AddressFactory         $quoteAddressFactory
      * @param \Magento\Quote\Model\Quote\Address\ToOrderAddress $toOrderAddress
      * @param \Magento\Sales\Api\OrderRepositoryInterface       $orderRepository
-     * @param \ECInternet\OrderFeatures\Helper\Data             $helper
      * @param \ECInternet\OrderFeatures\Model\Config            $config
      */
     public function __construct(
         QuoteAddressFactory $quoteAddressFactory,
         ToOrderAddress $toOrderAddress,
         OrderRepositoryInterface $orderRepository,
-        Data $helper,
         Config $config
     ) {
         $this->quoteAddressFactory = $quoteAddressFactory;
         $this->toOrderAddress      = $toOrderAddress;
         $this->orderRepository      = $orderRepository;
-        $this->helper               = $helper;
         $this->config               = $config;
     }
 
@@ -91,7 +86,7 @@ class SalesOrderPlaceAfter implements ObserverInterface
             /** @var \Magento\Sales\Api\Data\OrderAddressInterface $billingAddress */
             if ($billingAddress = $order->getBillingAddress()) {
                 // Set the payment address.
-                $this->helper->setOrderPaymentAddress($order, $billingAddress);
+                $this->setOrderPaymentAddress($order, $billingAddress);
 
                 /** @var \Magento\Customer\Model\Customer $customer */
                 if ($customer = $order->getCustomer()) {
@@ -111,5 +106,52 @@ class SalesOrderPlaceAfter implements ObserverInterface
                 $this->orderRepository->save($order);
             }
         }
+    }
+
+    /**
+     * Sets the payment address, if any, for the order
+     *
+     * @param \Magento\Sales\Model\Order                         $order
+     * @param \Magento\Sales\Api\Data\OrderAddressInterface|null $address
+     *
+     * @return \Magento\Sales\Model\Order
+     */
+    private function setOrderPaymentAddress(
+        Order $order,
+        OrderAddressInterface $address = null
+    ) {
+        /** @var \Magento\Sales\Api\Data\OrderAddressInterface $old */
+        $old = $this->getOrderPaymentAddress($order);
+        if (!empty($old) && !empty($address)) {
+            $address->setId($old->getId());
+        }
+
+        if (!empty($address)) {
+            $address->setEmail($order->getCustomerEmail());
+            $order->addAddress($address->setAddressType(self::PAYMENT_ADDRESS_TYPE));
+        }
+
+        return $order;
+    }
+
+        /**
+     * Retrieve order payment address from Order
+     *
+     * @param \Magento\Sales\Model\Order $order
+     *
+     * @return \Magento\Sales\Api\Data\OrderAddressInterface|null
+     */
+    private function getOrderPaymentAddress(
+        Order $order
+    ) {
+        foreach ($order->getAddresses() as $address) {
+            if ($address->getAddressType() == self::PAYMENT_ADDRESS_TYPE) {
+                if (!$address->isDeleted()) {
+                    return $address;
+                }
+            }
+        }
+
+        return null;
     }
 }
