@@ -21,9 +21,9 @@ use Magento\Payment\Model\InfoInterface;
 use Magento\Payment\Model\Method\AbstractMethod;
 use Magento\Payment\Model\Method\Logger;
 use Magento\Quote\Api\Data\CartInterface;
-use Magento\Store\Model\StoreManagerInterface;
 use ECInternet\OrderFeatures\Helper\Data;
 use ECInternet\OrderFeatures\Logger\Logger as OrderFeaturesLogger;
+use ECInternet\OrderFeatures\Model\Config;
 use ECInternet\OrderFeatures\Model\ResourceModel\Erpterms\CollectionFactory as ErptermsCollection;
 
 /**
@@ -67,14 +67,9 @@ class Erpterms extends AbstractMethod
     private $_customerSession;
 
     /**
-     * @var \Magento\Store\Model\StoreManagerInterface
+     * @var \ECInternet\OrderFeatures\Model\Config
      */
-    private $_storeManager;
-
-    /**
-     * @var \ECInternet\OrderFeatures\Helper\Data
-     */
-    private $_helper;
+    private $config;
 
     /**
      * @var \ECInternet\OrderFeatures\Model\ResourceModel\Erpterms\CollectionFactory
@@ -92,8 +87,7 @@ class Erpterms extends AbstractMethod
      * @param \Magento\Framework\App\Config\ScopeConfigInterface                       $scopeConfig
      * @param \Magento\Payment\Model\Method\Logger                                     $logger
      * @param \Magento\Customer\Model\Session                                          $customerSession
-     * @param \Magento\Store\Model\StoreManagerInterface                               $storeManager
-     * @param \ECInternet\OrderFeatures\Helper\Data                                    $helper
+     * @param \ECInternet\OrderFeatures\Model\Config                                   $config
      * @param \ECInternet\OrderFeatures\Logger\Logger                                  $orderFeaturesLogger
      * @param \ECInternet\OrderFeatures\Model\ResourceModel\Erpterms\CollectionFactory $erptermsCollection
      * @param \Magento\Framework\Model\ResourceModel\AbstractResource|null             $resource
@@ -110,8 +104,7 @@ class Erpterms extends AbstractMethod
         ScopeConfigInterface $scopeConfig,
         Logger $logger,
         CustomerSession $customerSession,
-        StoreManagerInterface $storeManager,
-        Data $helper,
+        Config $config,
         OrderFeaturesLogger $orderFeaturesLogger,
         ErptermsCollection $erptermsCollection,
         AbstractResource $resource = null,
@@ -134,8 +127,7 @@ class Erpterms extends AbstractMethod
         );
 
         $this->_customerSession           = $customerSession;
-        $this->_storeManager              = $storeManager;
-        $this->_helper                    = $helper;
+        $this->config                     = $config;
         $this->_logger                    = $orderFeaturesLogger;
         $this->_erptermsCollectionFactory = $erptermsCollection;
     }
@@ -225,13 +217,9 @@ class Erpterms extends AbstractMethod
         // Look up term assigned to the current customer and use that if available.
         $terms = $this->getCustomerERPTerms();
         if (!empty($terms)) {
-            // Cache storeId
-            $storeId = $this->_storeManager->getStore()->getId();
-
             /** @var \ECInternet\OrderFeatures\Model\ResourceModel\Erpterms\Collection $termsCollection */
             $termsCollection = $this->_erptermsCollectionFactory->create()
                 ->addFieldToFilter(\ECInternet\OrderFeatures\Model\Erpterms::COLUMN_ERP_TERMS, ['eq' => $terms])
-                //->addFieldToFilter(\ECInternet\OrderFeatures\Model\Erpterms::COLUMN_STORE_ID, ['eq' => $storeId])
                 ->addFieldToFilter(\ECInternet\OrderFeatures\Model\Erpterms::COLUMN_IS_ACTIVE, ['eq' => 1]);
 
             if ($erpterm = $termsCollection->getFirstItem()) {
@@ -258,7 +246,7 @@ class Erpterms extends AbstractMethod
     ) {
         //$this->log('isAvailable()');
 
-        if (!$this->_helper->isModuleEnabled()) {
+        if (!$this->config->isModuleEnabled()) {
             $this->log('isAvailable() - Module is not enabled.');
 
             return false;
