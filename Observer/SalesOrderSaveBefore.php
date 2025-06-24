@@ -19,8 +19,6 @@ use ECInternet\OrderFeatures\Model\Config;
  */
 class SalesOrderSaveBefore implements ObserverInterface
 {
-    private const FREE_PAYMENT_CODE = 'ecinternet_free';
-
     /**
      * @var \Magento\Backend\Model\Auth\Session
      */
@@ -71,7 +69,7 @@ class SalesOrderSaveBefore implements ObserverInterface
         if ($order = $observer->getEvent()->getData('order')) {
             /** @var \Magento\Sales\Api\Data\OrderPaymentInterface $payment */
             if ($payment = $order->getPayment()) {
-                if ($payment->getMethod() === self::FREE_PAYMENT_CODE) {
+                if ($payment->getMethod() === \ECInternet\OrderFeatures\Model\Payment\Free::CODE) {
                     // Get all items and set them to $0
                     $products = $order->getAllItems();
                     foreach ($products as $product) {

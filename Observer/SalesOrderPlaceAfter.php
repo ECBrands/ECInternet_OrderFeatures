@@ -124,27 +124,24 @@ class SalesOrderPlaceAfter implements ObserverInterface
     /**
      * Sets the payment address, if any, for the order
      *
-     * @param \Magento\Sales\Model\Order                         $order
-     * @param \Magento\Sales\Api\Data\OrderAddressInterface|null $address
+     * @param \Magento\Sales\Model\Order                    $order
+     * @param \Magento\Sales\Api\Data\OrderAddressInterface $address
      *
-     * @return \Magento\Sales\Model\Order
+     * @return void
      */
     private function setOrderPaymentAddress(
         Order $order,
-        OrderAddressInterface $address = null
+        OrderAddressInterface $address
     ) {
-        /** @var \Magento\Sales\Api\Data\OrderAddressInterface $old */
-        $old = $this->getOrderPaymentAddress($order);
-        if (!empty($old) && !empty($address)) {
-            $address->setId($old->getId());
+        /** @var \Magento\Sales\Api\Data\OrderAddressInterface $orderPaymentAddress */
+        if ($orderPaymentAddress = $this->getOrderPaymentAddress($order)) {
+            $address->setId($orderPaymentAddress->getId());
         }
 
-        if (!empty($address)) {
-            $address->setEmail($order->getCustomerEmail());
-            $order->addAddress($address->setAddressType(self::PAYMENT_ADDRESS_TYPE));
-        }
+        $address->setEmail($order->getCustomerEmail());
+        $address->setAddressType(self::PAYMENT_ADDRESS_TYPE);
 
-        return $order;
+        $order->addAddress($address);
     }
 
     /**
@@ -158,7 +155,7 @@ class SalesOrderPlaceAfter implements ObserverInterface
         Order $order
     ) {
         foreach ($order->getAddresses() as $address) {
-            if ($address->getAddressType() == self::PAYMENT_ADDRESS_TYPE) {
+            if ((string)$address->getAddressType() === self::PAYMENT_ADDRESS_TYPE) {
                 if (!$address->isDeleted()) {
                     return $address;
                 }
