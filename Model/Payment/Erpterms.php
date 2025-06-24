@@ -93,7 +93,7 @@ class Erpterms extends AbstractMethod
      * @param \Magento\Payment\Model\Method\Logger                                     $logger
      * @param \Magento\Customer\Model\Session                                          $customerSession
      * @param \ECInternet\OrderFeatures\Logger\Logger                                  $orderFeaturesLogger
-     * @param \ECInternet\OrderFeatures\Model\Config $config
+     * @param \ECInternet\OrderFeatures\Model\Config                                   $config
      * @param \ECInternet\OrderFeatures\Model\ResourceModel\Erpterms\CollectionFactory $erptermsCollection
      * @param \Magento\Framework\Model\ResourceModel\AbstractResource|null             $resource
      * @param \Magento\Framework\Data\Collection\AbstractDb|null                       $resourceCollection
@@ -256,35 +256,41 @@ class Erpterms extends AbstractMethod
         }
 
         $allowedCustomerGroups = $this->getAllowedCustomerGroupIds();
-        if (count($allowedCustomerGroups)) {
-            $allowedErpterms = $this->getAllowedErpterms();
-            if (count($allowedErpterms)) {
-                if ($customerErpterms = $this->getCustomerERPTerms()) {
-                    if (in_array($customerErpterms, $allowedErpterms)) {
-                        $customerGroupId = $this->getCustomerGroupId();
-                        if (!empty($customerGroupId)) {
-                            if (in_array($customerGroupId, $allowedCustomerGroups)) {
-                                return true;
-                            } else {
-                                $this->log('isAvailable() - CustomerGroup not in allowed groups.');
-                            }
-                        } else {
-                            $this->log('isAvailable() - Customer groupId is empty.');
-                        }
-                    } else {
-                        $this->log("isAvailable() - Customer does not have allowed 'erp_terms' value.");
-                    }
-                } else {
-                    $this->log("isAvailable() - Customer does not have 'erp_terms' attribute value.");
-                }
-            } else {
-                $this->log('isAvailable() - 0 allowed erpterms.');
-            }
-        } else {
+        if (count($allowedCustomerGroups) === 0) {
             $this->log('isAvailable() - 0 allowed customer groups.');
+            return false;
         }
 
-        return false;
+        $allowedErpterms = $this->getAllowedErpterms();
+        if (count($allowedErpterms) === 0) {
+            $this->log('isAvailable() - 0 allowed erpterms.');
+            return false;
+        }
+
+        $customerErpterms = $this->getCustomerERPTerms();
+        if (!$customerErpterms) {
+            $this->log("isAvailable() - Customer does not have 'erp_terms' attribute value.");
+            return false;
+        }
+
+        if (!in_array($customerErpterms, $allowedErpterms)) {
+            $this->log("isAvailable() - Customer does not have allowed 'erp_terms' value.");
+            return false;
+        }
+
+        $customerGroupId = $this->getCustomerGroupId();
+        if ($customerGroupId === null) {
+            $this->log('isAvailable() - Customer groupId is empty.');
+
+            return false;
+        }
+
+        if (!in_array($customerGroupId, $allowedCustomerGroups)) {
+            $this->log('isAvailable() - CustomerGroup not in allowed groups.');
+            return false;
+        }
+
+        return true;
     }
 
     /**
