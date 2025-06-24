@@ -22,12 +22,12 @@ class OrderRepositoryInterfacePlugin
     /**
      * @var \Magento\Sales\Api\Data\OrderExtensionFactory
      */
-    private $_orderExtensionFactory;
+    private $orderExtensionFactory;
 
     /**
      * @var \ECInternet\OrderFeatures\Helper\Data
      */
-    private $_helper;
+    private $helper;
 
     /**
      * OrderRepositoryInterfacePlugin constructor
@@ -39,8 +39,8 @@ class OrderRepositoryInterfacePlugin
         OrderExtensionFactory $orderExtensionFactory,
         Data $helper
     ) {
-        $this->_orderExtensionFactory = $orderExtensionFactory;
-        $this->_helper                = $helper;
+        $this->orderExtensionFactory = $orderExtensionFactory;
+        $this->helper                = $helper;
     }
 
     /**
@@ -91,9 +91,9 @@ class OrderRepositoryInterfacePlugin
         /** @noinspection PhpUnusedParameterInspection */ OrderRepositoryInterface $subject,
         OrderInterface $resultOrder
     ) {
-        $extensionAttributes = $resultOrder->getExtensionAttributes() ?: $this->_orderExtensionFactory->create();
+        $extensionAttributes = $resultOrder->getExtensionAttributes() ?: $this->orderExtensionFactory->create();
         if ($extensionAttributes instanceof OrderExtension) {
-            $resultOrder->setData('external_order_reference', $extensionAttributes->getExternalOrderReference());
+            $resultOrder->setData(Data::ATTRIBUTE_EXTERNAL_ORDER_REFERENCE, $extensionAttributes->getExternalOrderReference());
         }
 
         return [$resultOrder];
@@ -113,9 +113,9 @@ class OrderRepositoryInterfacePlugin
         $extensionAttributes = $order->getExtensionAttributes();
 
         /** @var \Magento\Sales\Api\Data\OrderExtension $orderExtension */
-        $orderExtension = $extensionAttributes ?: $this->_orderExtensionFactory->create();
+        $orderExtension = $extensionAttributes ?: $this->orderExtensionFactory->create();
 
-        $attributeCodes = $this->_helper->getCustomOrderExtensionAttributeCodes();
+        $attributeCodes = $this->helper->getCustomOrderExtensionAttributeCodes();
         foreach ($attributeCodes as $attributeCode) {
             if ($data = $order->getData($attributeCode)) {
                 $orderExtension->setData($attributeCode, $data);
