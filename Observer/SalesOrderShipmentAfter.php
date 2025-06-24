@@ -100,6 +100,7 @@ class SalesOrderShipmentAfter implements ObserverInterface
                 $order->setState(Order::STATE_PROCESSING);
                 $order->setStatus(self::ORDER_STATUS_PARTIALLY_SHIPPED);
                 $order->addCommentToStatusHistory('Partial shipment created.', self::ORDER_STATUS_PARTIALLY_SHIPPED);
+
                 try {
                     $order->save();
                 } catch (Exception $e) {
@@ -125,7 +126,7 @@ class SalesOrderShipmentAfter implements ObserverInterface
     private function isOrderNew(
         Order $order
     ) {
-        return $order->getState() == Order::STATE_NEW;
+        return (string)$order->getState() === Order::STATE_NEW;
     }
 
     /**
@@ -175,11 +176,9 @@ class SalesOrderShipmentAfter implements ObserverInterface
 
         $ordered = (float)$orderItem->getQtyOrdered();
         $shipped = (float)$orderItem->getQtyShipped();
-
         $this->log('isItemFullyShipped()', ['ordered' => $ordered, 'shipped' => $shipped]);
 
-        // Don't use === because value is sometimes returned as integer instead of float
-        return $ordered == $shipped;
+        return $ordered === $shipped;
     }
 
     /**
