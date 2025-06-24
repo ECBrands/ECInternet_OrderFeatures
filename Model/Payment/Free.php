@@ -124,9 +124,9 @@ class Free extends AbstractMethod
             $directory
         );
 
-        $this->_logger      = $orderFeaturesLogger;
-        $this->authSession  = $authSession;
-        $this->config       = $config;
+        $this->_logger     = $orderFeaturesLogger;
+        $this->authSession = $authSession;
+        $this->config      = $config;
     }
 
     /**
