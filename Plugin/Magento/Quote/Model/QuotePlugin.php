@@ -97,14 +97,26 @@ class QuotePlugin
             return $proceed($address);
         }
 
-        try {
-            /** @var \Magento\Customer\Api\Data\AddressInterface $defaultBillingAddress */
-            $defaultBillingAddress = $this->addressRepository->getById($defaultAddressId);
+        /** @var \Magento\Customer\Api\Data\AddressInterface $defaultBillingAddress */
+        $defaultBillingAddress = $this->getCustomerAddress($defaultAddressId);
+        if ($defaultBillingAddress === null) {
+            $this->log('aroundSetBillingAddress() - No customer address with id ' . $defaultAddressId);
+            return $proceed($address);
+        }
 
-            /** @var \Magento\Quote\Model\Quote\Address $old */
-            if ($old = $subject->getBillingAddress()) {
-                $old->importCustomerAddressData($defaultBillingAddress);
+        /*
+         * If there is a billing address set on the quote, override with the Customer's default billing address.
+         * If there is no billing address set on the quote, create a new Quote Address object, import the Customer's
+         * default billing address data into it, and then add it to the quote.
+         */
+
+        try {
+            /** @var \Magento\Quote\Model\Quote\Address $billingAddress */
+            if ($billingAddress = $subject->getBillingAddress()) {
+                // Import quote address data from customer address Data Object
+                $billingAddress->importCustomerAddressData($defaultBillingAddress);
             } else {
+                // Create new QuoteAddress object and import the Customer's default billing address data into it
                 $quoteAddress = $this->quoteAddressFactory->create();
                 $quoteAddress->importCustomerAddressData($defaultBillingAddress);
 
@@ -121,6 +133,20 @@ class QuotePlugin
         }
 
         return $subject;
+    }
+
+    private function getCustomerAddress($customerAddressId)
+    {
+        try {
+            return $this->addressRepository->getById($customerAddressId);
+        } catch (LocalizedException $e) {
+            $this->log('getCustomerAddress()', [
+                'customerAddressId' => $customerAddressId,
+                'exception'         => $e->getMessage()
+            ]);
+        }
+
+        return null;
     }
 
     private function log(string $message, array $extra = [])
