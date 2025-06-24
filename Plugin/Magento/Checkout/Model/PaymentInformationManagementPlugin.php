@@ -44,12 +44,14 @@ class PaymentInformationManagementPlugin
      * @param \Magento\Quote\Api\Data\PaymentInterface             $paymentMethod
      * @param \Magento\Quote\Api\Data\AddressInterface|null        $billingAddress
      *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     *
      * @return int
      */
     public function afterSavePaymentInformationAndPlaceOrder(
         /** @noinspection PhpUnusedParameterInspection */ PaymentInformationManagement $subject,
         int $result,
-        /* @noinspection PhpMissingParamTypeInspection PhpUnusedParameterInspection */ $cartId,
+        /* @noinspection PhpMissingParamTypeInspection */ /* @noinspection PhpUnusedParameterInspection */ $cartId,
         PaymentInterface $paymentMethod,
         AddressInterface $billingAddress = null
     ) {
