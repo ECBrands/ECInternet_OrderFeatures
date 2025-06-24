@@ -20,7 +20,7 @@ class ShipmentTrackingNumbers extends Column
     /**
      * @var \Magento\Sales\Api\OrderRepositoryInterface
      */
-    private $_orderRepository;
+    private $orderRepository;
 
     /**
      * ShipmentTrackingNumbers constructor.
@@ -40,7 +40,7 @@ class ShipmentTrackingNumbers extends Column
     ) {
         parent::__construct($context, $uiComponentFactory, $components, $data);
 
-        $this->_orderRepository = $orderRepository;
+        $this->orderRepository = $orderRepository;
     }
 
     /**
@@ -73,7 +73,7 @@ class ShipmentTrackingNumbers extends Column
         $trackingNumbers = [];
 
         /** @var \Magento\Sales\Api\Data\OrderInterface $order */
-        $order = $this->_orderRepository->get($orderId);
+        $order = $this->orderRepository->get($orderId);
 
         /** @var \Magento\Sales\Model\ResourceModel\Order\Shipment\Track\Collection $tracks */
         $tracks = $order->getTracksCollection();
