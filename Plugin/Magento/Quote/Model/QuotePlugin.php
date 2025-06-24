@@ -97,8 +97,13 @@ class QuotePlugin
             return $proceed($address);
         }
 
+        if (!is_numeric($defaultAddressId)) {
+            $this->log('aroundSetBillingAddress() - Default billing address ID is not numeric: ' . $defaultAddressId);
+            return $proceed($address);
+        }
+
         /** @var \Magento\Customer\Api\Data\AddressInterface $defaultBillingAddress */
-        $defaultBillingAddress = $this->getCustomerAddress($defaultAddressId);
+        $defaultBillingAddress = $this->getCustomerAddressById((int)$defaultAddressId);
         if ($defaultBillingAddress === null) {
             $this->log('aroundSetBillingAddress() - No customer address with id ' . $defaultAddressId);
             return $proceed($address);
@@ -110,32 +115,29 @@ class QuotePlugin
          * default billing address data into it, and then add it to the quote.
          */
 
-        try {
-            /** @var \Magento\Quote\Model\Quote\Address $billingAddress */
-            if ($billingAddress = $subject->getBillingAddress()) {
-                // Import quote address data from customer address Data Object
-                $billingAddress->importCustomerAddressData($defaultBillingAddress);
-            } else {
-                // Create new QuoteAddress object and import the Customer's default billing address data into it
-                $quoteAddress = $this->quoteAddressFactory->create();
-                $quoteAddress->importCustomerAddressData($defaultBillingAddress);
+        /** @var \Magento\Quote\Model\Quote\Address $billingAddress */
+        if ($billingAddress = $subject->getBillingAddress()) {
+            // Import quote address data from customer address Data Object
+            $billingAddress->importCustomerAddressData($defaultBillingAddress);
+        } else {
+            // Create new QuoteAddress object and import the Customer's default billing address data into it
+            $quoteAddress = $this->quoteAddressFactory->create();
+            $quoteAddress->importCustomerAddressData($defaultBillingAddress);
 
-                $subject->addAddress($quoteAddress);
-            }
-        } catch (LocalizedException $e) {
-            $this->log('aroundSetBillingAddress()', [
-                'exception' => $e->getMessage(),
-                'trace'     => $e->getTraceAsString()
-            ]);
-
-            // Address not found?
-            return $proceed($address);
+            $subject->addAddress($quoteAddress);
         }
 
         return $subject;
     }
 
-    private function getCustomerAddress($customerAddressId)
+    /**
+     * Fetch CustomerAddress by ID
+     *
+     * @param int $customerAddressId
+     *
+     * @return \Magento\Customer\Api\Data\AddressInterface|null
+     */
+    private function getCustomerAddressById(int $customerAddressId)
     {
         try {
             return $this->addressRepository->getById($customerAddressId);
