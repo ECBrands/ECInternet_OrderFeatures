@@ -36,16 +36,6 @@
 		</arguments>
 	</type>
 
-	<!-- Custom Logger -->
-	<type name="ECInternet\OrderFeatures\Logger\Logger">
-		<arguments>
-			<argument name="name" xsi:type="string">OrderFeatures</argument>
-			<argument name="handlers" xsi:type="array">
-				<item name="system" xsi:type="object">ECInternet\OrderFeatures\Logger\Handler</item>
-			</argument>
-		</arguments>
-	</type>
-
 	<!-- Erpterms grid collection -->
 	<virtualType name="ECInternet\OrderFeatures\Model\ResourceModel\Erpterms\Grid\Collection"
 	             type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">

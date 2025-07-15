@@ -24,7 +24,7 @@ use Psr\Log\LoggerInterface;
  */
 class AdminOnly extends AbstractCarrier implements CarrierInterface
 {
-    const CODE = 'ecinternet_admin_only';
+    private const CODE = 'ecinternet_admin_only';
 
     protected $_code = self::CODE;
 
@@ -33,17 +33,17 @@ class AdminOnly extends AbstractCarrier implements CarrierInterface
     /**
      * @var \Magento\Framework\App\State
      */
-    private $_appState;
+    private $appState;
 
     /**
      * @var \Magento\Quote\Model\Quote\Address\RateResult\MethodFactory
      */
-    private $_rateMethodFactory;
+    private $rateMethodFactory;
 
     /**
      * @var \Magento\Shipping\Model\Rate\ResultFactory
      */
-    private $_rateResultFactory;
+    private $rateResultFactory;
 
     /**
      * AdminOnly constructor.
@@ -65,11 +65,11 @@ class AdminOnly extends AbstractCarrier implements CarrierInterface
         State $appState,
         array $data = []
     ) {
-        parent::__construct($scopeConfig, $rateErrorFactory, $logger, $data);
+        $this->rateResultFactory = $rateResultFactory;
+        $this->rateMethodFactory = $rateMethodFactory;
+        $this->appState          = $appState;
 
-        $this->_rateResultFactory = $rateResultFactory;
-        $this->_rateMethodFactory = $rateMethodFactory;
-        $this->_appState          = $appState;
+        parent::__construct($scopeConfig, $rateErrorFactory, $logger, $data);
     }
 
     public function getAllowedMethods()
@@ -96,17 +96,17 @@ class AdminOnly extends AbstractCarrier implements CarrierInterface
         }
 
         /** @var \Magento\Shipping\Model\Rate\Result $result */
-        $result = $this->_rateResultFactory->create();
+        $result = $this->rateResultFactory->create();
 
         /** @var \Magento\Quote\Model\Quote\Address\RateResult\Method $method */
-        $method = $this->_rateMethodFactory->create();
+        $method = $this->rateMethodFactory->create();
 
-        $method->setData('carrier',       self::CODE);
+        $method->setData('carrier', self::CODE);
         $method->setData('carrier_title', $this->getConfigData('title'));
-        $method->setData('method',        self::CODE);
-        $method->setData('method_title',  $this->getConfigData('name'));
-        $method->setData('price',         $this->getConfigData('price'));
-        $method->setData('cost',          $this->getConfigData('price'));
+        $method->setData('method', self::CODE);
+        $method->setData('method_title', $this->getConfigData('name'));
+        $method->setData('price', $this->getConfigData('price'));
+        $method->setData('cost', $this->getConfigData('price'));
 
         $result->append($method);
 
@@ -121,6 +121,6 @@ class AdminOnly extends AbstractCarrier implements CarrierInterface
      */
     private function isAdmin()
     {
-        return $this->_appState->getAreaCode() === FrontNameResolver::AREA_CODE;
+        return $this->appState->getAreaCode() === FrontNameResolver::AREA_CODE;
     }
 }

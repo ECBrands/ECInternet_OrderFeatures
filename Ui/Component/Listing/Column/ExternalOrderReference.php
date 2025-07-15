@@ -11,7 +11,7 @@ use Magento\Framework\View\Element\UiComponentFactory;
 use Magento\Framework\View\Element\UiComponent\ContextInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Ui\Component\Listing\Columns\Column;
-use ECInternet\OrderFeatures\Helper\Data;
+use ECInternet\OrderFeatures\Model\Config;
 
 /**
  * ExternalOrderReference Column
@@ -21,7 +21,7 @@ class ExternalOrderReference extends Column
     /**
      * @var \Magento\Sales\Api\OrderRepositoryInterface
      */
-    private $_orderRepository;
+    private $orderRepository;
 
     /**
      * ExternalOrderReference constructor.
@@ -41,7 +41,7 @@ class ExternalOrderReference extends Column
     ) {
         parent::__construct($context, $uiComponentFactory, $components, $data);
 
-        $this->_orderRepository = $orderRepository;
+        $this->orderRepository = $orderRepository;
     }
 
     /**
@@ -71,8 +71,8 @@ class ExternalOrderReference extends Column
      */
     private function getExternalOrderReference(int $orderId)
     {
-        $order = $this->_orderRepository->get($orderId);
+        $order = $this->orderRepository->get($orderId);
 
-        return (string)$order->getData(Data::ATTRIBUTE_EXTERNAL_ORDER_REFERENCE);
+        return (string)$order->getData(Config::ATTRIBUTE_EXTERNAL_ORDER_REFERENCE);
     }
 }

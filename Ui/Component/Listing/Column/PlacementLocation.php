@@ -11,7 +11,7 @@ use Magento\Framework\View\Element\UiComponentFactory;
 use Magento\Framework\View\Element\UiComponent\ContextInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Ui\Component\Listing\Columns\Column;
-use ECInternet\OrderFeatures\Helper\Data;
+use ECInternet\OrderFeatures\Model\Config;
 
 /**
  * PlacementLocation Column
@@ -21,7 +21,7 @@ class PlacementLocation extends Column
     /**
      * @var \Magento\Sales\Api\OrderRepositoryInterface
      */
-    private $_orderRepository;
+    private $orderRepository;
 
     /**
      * PlacementLocation constructor.
@@ -41,7 +41,7 @@ class PlacementLocation extends Column
     ) {
         parent::__construct($context, $uiComponentFactory, $components, $data);
 
-        $this->_orderRepository = $orderRepository;
+        $this->orderRepository = $orderRepository;
     }
 
     /**
@@ -51,21 +51,27 @@ class PlacementLocation extends Column
     {
         if (isset($dataSource['data']['items'])) {
             foreach ($dataSource['data']['items'] as &$item) {
-                /** @var \Magento\Sales\Api\Data\OrderInterface $order */
-                $order = $this->_orderRepository->get($item['entity_id']);
-
-                $placedInAdmin = $order->getData(Data::ATTRIBUTE_PLACED_IN_ADMIN);
-                if ($placedInAdmin) {
-                    $location = 'Placed in Admin';
-                } else {
-                    $location = 'Placed on Frontend';
-                }
-
-                // Assign to item
-                $item[$this->getData('name')] = $location;
+                $item[$this->getData('name')] = $this->getPlacementLocation((int)$item['entity_id']);
             }
         }
 
         return $dataSource;
+    }
+
+    /**
+     * Get 'placed_in_admin' data
+     *
+     * @param int $orderId
+     *
+     * @return string
+     */
+    private function getPlacementLocation(int $orderId)
+    {
+        /** @var \Magento\Sales\Api\Data\OrderInterface $order */
+        $order = $this->orderRepository->get($orderId);
+
+        return $order->getData(Config::ATTRIBUTE_PLACED_IN_ADMIN)
+            ? 'Placed in Admin'
+            : 'Placed on Frontend';
     }
 }

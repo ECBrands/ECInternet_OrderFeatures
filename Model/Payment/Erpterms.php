@@ -22,9 +22,7 @@ use Magento\Payment\Model\InfoInterface;
 use Magento\Payment\Model\Method\AbstractMethod;
 use Magento\Payment\Model\Method\Logger;
 use Magento\Quote\Api\Data\CartInterface;
-use Magento\Store\Model\StoreManagerInterface;
-use ECInternet\OrderFeatures\Helper\Data;
-use ECInternet\OrderFeatures\Logger\Logger as OrderFeaturesLogger;
+use ECInternet\OrderFeatures\Model\Config;
 use ECInternet\OrderFeatures\Model\ResourceModel\Erpterms\CollectionFactory as ErptermsCollection;
 
 /**
@@ -65,27 +63,22 @@ class Erpterms extends AbstractMethod
     /**
      * @var \Magento\Backend\Model\Session\Quote
      */
-    private $_adminQuoteSession;
+    private $adminQuoteSession;
 
     /**
      * @var \Magento\Customer\Model\Session
      */
-    private $_customerSession;
+    private $customerSession;
 
     /**
-     * @var \Magento\Store\Model\StoreManagerInterface
+     * @var \ECInternet\OrderFeatures\Model\Config
      */
-    private $_storeManager;
-
-    /**
-     * @var \ECInternet\OrderFeatures\Helper\Data
-     */
-    private $_helper;
+    private $config;
 
     /**
      * @var \ECInternet\OrderFeatures\Model\ResourceModel\Erpterms\CollectionFactory
      */
-    private $_erptermsCollectionFactory;
+    private $erptermsCollectionFactory;
 
     /**
      * Erpterms constructor.
@@ -99,9 +92,7 @@ class Erpterms extends AbstractMethod
      * @param \Magento\Payment\Model\Method\Logger                                     $logger
      * @param \Magento\Backend\Model\Session\Quote                                     $adminQuoteSession
      * @param \Magento\Customer\Model\Session                                          $customerSession
-     * @param \Magento\Store\Model\StoreManagerInterface                               $storeManager
-     * @param \ECInternet\OrderFeatures\Helper\Data                                    $helper
-     * @param \ECInternet\OrderFeatures\Logger\Logger                                  $orderFeaturesLogger
+     * @param \ECInternet\OrderFeatures\Model\Config                                   $config
      * @param \ECInternet\OrderFeatures\Model\ResourceModel\Erpterms\CollectionFactory $erptermsCollection
      * @param \Magento\Framework\Model\ResourceModel\AbstractResource|null             $resource
      * @param \Magento\Framework\Data\Collection\AbstractDb|null                       $resourceCollection
@@ -118,14 +109,12 @@ class Erpterms extends AbstractMethod
         Logger $logger,
         AdminQuoteSession $adminQuoteSession,
         CustomerSession $customerSession,
-        StoreManagerInterface $storeManager,
-        Data $helper,
-        OrderFeaturesLogger $orderFeaturesLogger,
+        Config $config,
         ErptermsCollection $erptermsCollection,
-        AbstractResource $resource = null,
-        AbstractDb $resourceCollection = null,
+        ?AbstractResource $resource = null,
+        ?AbstractDb $resourceCollection = null,
         array $data = [],
-        DirectoryHelper $directory = null
+        ?DirectoryHelper $directory = null
     ) {
         parent::__construct(
             $context,
@@ -141,12 +130,10 @@ class Erpterms extends AbstractMethod
             $directory
         );
 
-        $this->_adminQuoteSession         = $adminQuoteSession;
-        $this->_customerSession           = $customerSession;
-        $this->_storeManager              = $storeManager;
-        $this->_helper                    = $helper;
-        $this->_logger                    = $orderFeaturesLogger;
-        $this->_erptermsCollectionFactory = $erptermsCollection;
+        $this->adminQuoteSession         = $adminQuoteSession;
+        $this->customerSession           = $customerSession;
+        $this->config                    = $config;
+        $this->erptermsCollectionFactory = $erptermsCollection;
     }
 
     /**
@@ -234,13 +221,9 @@ class Erpterms extends AbstractMethod
         // Look up term assigned to the current customer and use that if available.
         $terms = $this->getCustomerERPTerms();
         if (!empty($terms)) {
-            // Cache storeId
-            $storeId = $this->_storeManager->getStore()->getId();
-
             /** @var \ECInternet\OrderFeatures\Model\ResourceModel\Erpterms\Collection $termsCollection */
-            $termsCollection = $this->_erptermsCollectionFactory->create()
+            $termsCollection = $this->erptermsCollectionFactory->create()
                 ->addFieldToFilter(\ECInternet\OrderFeatures\Model\Erpterms::COLUMN_ERP_TERMS, ['eq' => $terms])
-                //->addFieldToFilter(\ECInternet\OrderFeatures\Model\Erpterms::COLUMN_STORE_ID, ['eq' => $storeId])
                 ->addFieldToFilter(\ECInternet\OrderFeatures\Model\Erpterms::COLUMN_IS_ACTIVE, ['eq' => 1]);
 
             if ($erpterm = $termsCollection->getFirstItem()) {
@@ -263,46 +246,48 @@ class Erpterms extends AbstractMethod
      * @return bool
      */
     public function isAvailable(
-        CartInterface $quote = null
+        ?CartInterface $quote = null
     ) {
-        //$this->log('isAvailable()');
-
-        if (!$this->_helper->isModuleEnabled()) {
+        if (!$this->config->isModuleEnabled()) {
             $this->log('isAvailable() - Module is not enabled.');
-
             return false;
         }
 
         $allowedCustomerGroups = $this->getAllowedCustomerGroupIds();
-        if (count($allowedCustomerGroups)) {
-            $allowedErpterms = $this->getAllowedErpterms();
-            if (count($allowedErpterms)) {
-                if ($customerErpterms = $this->getCustomerERPTerms()) {
-                    if (in_array($customerErpterms, $allowedErpterms)) {
-                        $customerGroupId = $this->getCustomerGroupId();
-                        if (!empty($customerGroupId)) {
-                            if (in_array($customerGroupId, $allowedCustomerGroups)) {
-                                return true;
-                            } else {
-                                $this->log('isAvailable() - CustomerGroup not in allowed groups.');
-                            }
-                        } else {
-                            $this->log('isAvailable() - Customer groupId is empty.');
-                        }
-                    } else {
-                        $this->log("isAvailable() - Customer does not have allowed 'erp_terms' value.");
-                    }
-                } else {
-                    $this->log("isAvailable() - Customer does not have 'erp_terms' attribute value.");
-                }
-            } else {
-                $this->log('isAvailable() - 0 allowed erpterms.');
-            }
-        } else {
+        if (count($allowedCustomerGroups) === 0) {
             $this->log('isAvailable() - 0 allowed customer groups.');
+            return false;
         }
 
-        return false;
+        $allowedErpterms = $this->getAllowedErpterms();
+        if (count($allowedErpterms) === 0) {
+            $this->log('isAvailable() - 0 allowed erpterms.');
+            return false;
+        }
+
+        $customerErpterms = $this->getCustomerERPTerms();
+        if ($customerErpterms === null) {
+            $this->log("isAvailable() - Customer does not have 'erp_terms' attribute value.");
+            return false;
+        }
+
+        if (!in_array($customerErpterms, $allowedErpterms)) {
+            $this->log("isAvailable() - Customer does not have allowed 'erp_terms' value.");
+            return false;
+        }
+
+        $customerGroupId = $this->getCustomerGroupId();
+        if ($customerGroupId === null) {
+            $this->log('isAvailable() - Customer groupId is empty.');
+            return false;
+        }
+
+        if (!in_array($customerGroupId, $allowedCustomerGroups)) {
+            $this->log('isAvailable() - CustomerGroup not in allowed groups.');
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -329,10 +314,10 @@ class Erpterms extends AbstractMethod
     private function getAllowedErpterms()
     {
         /** @var \ECInternet\OrderFeatures\Model\ResourceModel\Erpterms\Collection $termCollection */
-        $termCollection = $this->_erptermsCollectionFactory->create()
+        $termCollection = $this->erptermsCollectionFactory->create()
             ->addFieldToFilter(\ECInternet\OrderFeatures\Model\Erpterms::COLUMN_IS_ACTIVE, ['eq' => 1]);
 
-        return $this->uppercaseTrimArray($termCollection->getColumnValues(Data::ATTRIBUTE_ERP_TERMS));
+        return $this->uppercaseTrimArray($termCollection->getColumnValues(Config::ATTRIBUTE_ERP_TERMS));
     }
 
     /**
@@ -342,9 +327,9 @@ class Erpterms extends AbstractMethod
      */
     private function getCustomerERPTerms()
     {
-        if ($adminQuote = $this->_adminQuoteSession->getQuote()) {
+        if ($adminQuote = $this->adminQuoteSession->getQuote()) {
             if ($adminCustomer = $adminQuote->getCustomer()) {
-                if ($termAttribute = $adminCustomer->getCustomAttribute(Data::ATTRIBUTE_ERP_TERMS)) {
+                if ($termAttribute = $adminCustomer->getCustomAttribute(Config::ATTRIBUTE_ERP_TERMS)) {
                     if ($termValue = $termAttribute->getValue()) {
                         return $this->uppercaseTrim((string)$termValue);
                     }
@@ -352,8 +337,8 @@ class Erpterms extends AbstractMethod
             }
         }
 
-        if ($customer = $this->_customerSession->getCustomer()) {
-            if ($customerErpTermsValue = $customer->getData(Data::ATTRIBUTE_ERP_TERMS)) {
+        if ($customer = $this->customerSession->getCustomer()) {
+            if ($customerErpTermsValue = $customer->getData(Config::ATTRIBUTE_ERP_TERMS)) {
                 return $this->uppercaseTrim((string)$customerErpTermsValue);
             }
         }
@@ -370,14 +355,14 @@ class Erpterms extends AbstractMethod
     {
         $customerGroupId = null;
 
-        if ($adminQuote = $this->_adminQuoteSession->getQuote()) {
+        if ($adminQuote = $this->adminQuoteSession->getQuote()) {
             if ($adminCustomer = $adminQuote->getCustomer()) {
                 $customerGroupId = $adminCustomer->getGroupId();
             }
         }
 
         if ($customerGroupId === null) {
-            if ($customer = $this->_customerSession->getCustomer()) {
+            if ($customer = $this->customerSession->getCustomer()) {
                 $customerGroupId = $customer->getGroupId();
             }
         }

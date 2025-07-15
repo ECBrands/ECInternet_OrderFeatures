@@ -12,32 +12,36 @@ use Magento\Framework\Event\ObserverInterface;
 use Magento\Quote\Model\Quote\AddressFactory as QuoteAddressFactory;
 use Magento\Quote\Model\Quote\Address\ToOrderAddress;
 use Magento\Sales\Api\OrderRepositoryInterface;
-use ECInternet\OrderFeatures\Helper\Data;
+use ECInternet\OrderFeatures\Model\Config;
+use Magento\Sales\Model\Order;
+use Magento\Sales\Api\Data\OrderAddressInterface;
 
 /**
  * Observer for 'sales_order_place_after' event
  */
 class SalesOrderPlaceAfter implements ObserverInterface
 {
+    private const PAYMENT_ADDRESS_TYPE = 'payment';
+
     /**
      * @var \Magento\Quote\Model\Quote\AddressFactory
      */
-    private $_quoteAddressFactory;
+    private $quoteAddressFactory;
 
     /**
      * @var \Magento\Quote\Model\Quote\Address\ToOrderAddress
      */
-    private $_toOrderAddress;
+    private $toOrderAddress;
 
     /**
      * @var \Magento\Sales\Api\OrderRepositoryInterface
      */
-    private $_orderRepository;
+    private $orderRepository;
 
     /**
-     * @var \ECInternet\OrderFeatures\Helper\Data
+     * @var \ECInternet\OrderFeatures\Model\Config
      */
-    private $_helper;
+    private $config;
 
     /**
      * SalesOrderPlaceAfter constructor.
@@ -45,18 +49,18 @@ class SalesOrderPlaceAfter implements ObserverInterface
      * @param \Magento\Quote\Model\Quote\AddressFactory         $quoteAddressFactory
      * @param \Magento\Quote\Model\Quote\Address\ToOrderAddress $toOrderAddress
      * @param \Magento\Sales\Api\OrderRepositoryInterface       $orderRepository
-     * @param \ECInternet\OrderFeatures\Helper\Data             $helper
+     * @param \ECInternet\OrderFeatures\Model\Config            $config
      */
     public function __construct(
         QuoteAddressFactory $quoteAddressFactory,
         ToOrderAddress $toOrderAddress,
         OrderRepositoryInterface $orderRepository,
-        Data $helper
+        Config $config
     ) {
-        $this->_quoteAddressFactory = $quoteAddressFactory;
-        $this->_toOrderAddress      = $toOrderAddress;
-        $this->_orderRepository     = $orderRepository;
-        $this->_helper              = $helper;
+        $this->quoteAddressFactory = $quoteAddressFactory;
+        $this->toOrderAddress      = $toOrderAddress;
+        $this->orderRepository     = $orderRepository;
+        $this->config              = $config;
     }
 
     /**
@@ -69,7 +73,11 @@ class SalesOrderPlaceAfter implements ObserverInterface
     public function execute(
         Observer $observer
     ) {
-        if (!$this->_helper->isModuleEnabled()) {
+        if (!$this->config->isModuleEnabled()) {
+            return;
+        }
+
+        if (!$this->config->isPaymentBillingEnabled()) {
             return;
         }
 
@@ -77,29 +85,61 @@ class SalesOrderPlaceAfter implements ObserverInterface
         if ($order = $observer->getEvent()->getData('order')) {
             /** @var \Magento\Sales\Api\Data\OrderAddressInterface $billingAddress */
             if ($billingAddress = $order->getBillingAddress()) {
-                // Set the billing address to equal the customer's payment address (if enabled)
-                if ($this->_helper->isPaymentBillingEnabled()) {
-                    // Set the payment address.
-                    $this->_helper->setOrderPaymentAddress($order, $billingAddress);
+                // Set the payment address.
+                $this->setOrderPaymentAddress($order, $billingAddress);
 
-                    /** @var \Magento\Customer\Model\Customer $customer */
-                    if ($customer = $order->getCustomer()) {
-                        if ($customerDefaultBillingAddress = $customer->getDefaultBillingAddress()) {
-                            // Convert to quote Address
-                            $quoteAddress = $this->_quoteAddressFactory->create();
-                            $quoteAddress->importCustomerAddressData($customerDefaultBillingAddress->getDataModel());
+                /** @var \Magento\Customer\Model\Customer $customer */
+                if ($customer = $order->getCustomer()) {
+                    if ($customerDefaultBillingAddress = $customer->getDefaultBillingAddress()) {
+                        // Convert to quote Address
+                        $quoteAddress = $this->quoteAddressFactory->create();
+                        $quoteAddress->importCustomerAddressData($customerDefaultBillingAddress->getDataModel());
 
-                            // Convert to order Address
-                            $orderAddress = $this->_toOrderAddress->convert($quoteAddress);
+                        // Convert to order Address
+                        $orderAddress = $this->toOrderAddress->convert($quoteAddress);
 
-                            // Update order
-                            $order->setBillingAddress($orderAddress);
-                        }
+                        // Update order
+                        $order->setBillingAddress($orderAddress);
                     }
                 }
 
-                $this->_orderRepository->save($order);
+                $this->orderRepository->save($order);
             }
         }
+    }
+
+    private function setOrderPaymentAddress(
+        Order $order,
+        ?OrderAddressInterface $address = null
+    ) {
+        if ($address !== null) {
+            if ($old = $this->getOrderPaymentAddress($order)) {
+                $address->setId($old->getId());
+            }
+
+            $address->setEmail($order->getCustomerEmail());
+            $order->addAddress($address->setAddressType(self::PAYMENT_ADDRESS_TYPE));
+        }
+    }
+
+    /**
+     * Retrieve order payment address from Order
+     *
+     * @param \Magento\Sales\Model\Order $order
+     *
+     * @return \Magento\Sales\Api\Data\OrderAddressInterface|null
+     */
+    private function getOrderPaymentAddress(
+        Order $order
+    ) {
+        foreach ($order->getAddresses() as $address) {
+            if ((string)$address->getAddressType() === self::PAYMENT_ADDRESS_TYPE) {
+                if (!$address->isDeleted()) {
+                    return $address;
+                }
+            }
+        }
+
+        return null;
     }
 }

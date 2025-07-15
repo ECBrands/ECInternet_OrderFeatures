@@ -5,18 +5,12 @@
  */
 declare(strict_types=1);
 
-namespace ECInternet\OrderFeatures\Helper;
+namespace ECInternet\OrderFeatures\Model;
 
 use Magento\Customer\Model\Session as CustomerSession;
-use Magento\Framework\App\Helper\AbstractHelper;
-use Magento\Framework\App\Helper\Context;
-use Magento\Sales\Api\Data\OrderAddressInterface;
-use Magento\Sales\Model\Order;
+use Magento\Framework\App\Config\ScopeConfigInterface;
 
-/**
- * Helper
- */
-class Data extends AbstractHelper
+class Config
 {
     private const CONFIG_PATH_ENABLED                = 'order_features/general/enable';
 
@@ -35,8 +29,6 @@ class Data extends AbstractHelper
     private const CONFIG_PATH_STORE_PICKUP           = 'order_features/shipments/store_pickups_to_trigger';
 
     private const CONFIG_PATH_MARK_AS_COMPLETE       = 'order_features/shipments/mark_order_complete';
-
-    private const PAYMENT_ADDRESS_TYPE               = 'payment';
 
     public const ATTRIBUTE_ERP_TERMS                 = 'erp_terms';
 
@@ -57,21 +49,19 @@ class Data extends AbstractHelper
     /**
      * @var \Magento\Customer\Model\Session
      */
-    private $_customerSession;
+    private $customerSession;
 
     /**
-     * Data constructor.
-     *
-     * @param \Magento\Framework\App\Helper\Context $context
-     * @param \Magento\Customer\Model\Session       $customerSession
+     * @var \Magento\Framework\App\Config\ScopeConfigInterface
      */
-    public function __construct(
-        Context $context,
-        CustomerSession $customerSession
-    ) {
-        parent::__construct($context);
+    private $scopeConfig;
 
-        $this->_customerSession = $customerSession;
+    public function __construct(
+        CustomerSession $customerSession,
+        ScopeConfigInterface $scopeConfig
+    ) {
+        $this->customerSession = $customerSession;
+        $this->scopeConfig     = $scopeConfig;
     }
 
     /**
@@ -105,11 +95,11 @@ class Data extends AbstractHelper
             return false;
         }
 
-        if (!$this->_customerSession->isLoggedIn()) {
+        if (!$this->customerSession->isLoggedIn()) {
             return false;
         }
 
-        if (!$this->_customerSession->getCustomer()->getDefaultBillingAddress()) {
+        if (!$this->customerSession->getCustomer()->getDefaultBillingAddress()) {
             return false;
         }
 
@@ -143,10 +133,6 @@ class Data extends AbstractHelper
      */
     public function isPaymentBillingEnabled()
     {
-        if (!$this->isModuleEnabled()) {
-            return false;
-        }
-
         return $this->scopeConfig->isSetFlag(self::CONFIG_PATH_PAYMENT_BILLING);
     }
 
@@ -184,53 +170,6 @@ class Data extends AbstractHelper
     public function shouldMarkOrderAsComplete()
     {
         return $this->scopeConfig->isSetFlag(self::CONFIG_PATH_MARK_AS_COMPLETE);
-    }
-
-    /**
-     * Sets the payment address, if any, for the order
-     *
-     * @param \Magento\Sales\Model\Order                         $order
-     * @param \Magento\Sales\Api\Data\OrderAddressInterface|null $address
-     *
-     * @return \Magento\Sales\Model\Order
-     */
-    public function setOrderPaymentAddress(
-        Order $order,
-        OrderAddressInterface $address = null
-    ) {
-        /** @var \Magento\Sales\Api\Data\OrderAddressInterface $old */
-        $old = $this->getOrderPaymentAddress($order);
-        if (!empty($old) && !empty($address)) {
-            $address->setId($old->getId());
-        }
-
-        if (!empty($address)) {
-            $address->setEmail($order->getCustomerEmail());
-            $order->addAddress($address->setAddressType(self::PAYMENT_ADDRESS_TYPE));
-        }
-
-        return $order;
-    }
-
-    /**
-     * Retrieve order payment address from Order
-     *
-     * @param \Magento\Sales\Model\Order $order
-     *
-     * @return \Magento\Sales\Api\Data\OrderAddressInterface|null
-     */
-    public function getOrderPaymentAddress(
-        Order $order
-    ) {
-        foreach ($order->getAddresses() as $address) {
-            if ($address->getAddressType() == self::PAYMENT_ADDRESS_TYPE) {
-                if (!$address->isDeleted()) {
-                    return $address;
-                }
-            }
-        }
-
-        return null;
     }
 
     /**

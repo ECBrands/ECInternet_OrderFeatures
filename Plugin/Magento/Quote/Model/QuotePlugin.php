@@ -12,8 +12,8 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\Quote\Api\Data\AddressInterface;
 use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\Quote\AddressFactory as QuoteAddressFactory;
-use ECInternet\OrderFeatures\Helper\Data;
-use ECInternet\OrderFeatures\Logger\Logger;
+use ECInternet\OrderFeatures\Model\Config;
+use Psr\Log\LoggerInterface;
 
 /**
  * Plugin for Magento\Quote\Model\Quote
@@ -23,76 +23,76 @@ class QuotePlugin
     /**
      * @var \Magento\Customer\Api\AddressRepositoryInterface
      */
-    private $_addressRepository;
+    private $addressRepository;
 
     /**
      * @var \Magento\Quote\Model\Quote\AddressFactory
      */
-    private $_quoteAddressFactory;
+    private $quoteAddressFactory;
 
     /**
-     * @var \ECInternet\OrderFeatures\Helper\Data
+     * @var \ECInternet\OrderFeatures\Model\Config
      */
-    private $_helper;
+    private $config;
 
     /**
-     * @var \ECInternet\OrderFeatures\Logger\Logger
+     * @var \Psr\Log\LoggerInterface
      */
-    private $_logger;
+    private $logger;
 
     /**
      * QuotePlugin constructor.
      *
      * @param \Magento\Customer\Api\AddressRepositoryInterface $addressRepository
      * @param \Magento\Quote\Model\Quote\AddressFactory        $quoteAddressFactory
-     * @param \ECInternet\OrderFeatures\Helper\Data            $helper
-     * @param \ECInternet\OrderFeatures\Logger\Logger          $logger
+     * @param \ECInternet\OrderFeatures\Model\Config           $config
+     * @param \Psr\Log\LoggerInterface                         $logger
      */
     public function __construct(
         AddressRepositoryInterface $addressRepository,
         QuoteAddressFactory $quoteAddressFactory,
-        Data $helper,
-        Logger $logger
+        Config $config,
+        LoggerInterface $logger
     ) {
-        $this->_addressRepository   = $addressRepository;
-        $this->_quoteAddressFactory = $quoteAddressFactory;
-        $this->_helper              = $helper;
-        $this->_logger              = $logger;
+        $this->addressRepository   = $addressRepository;
+        $this->quoteAddressFactory = $quoteAddressFactory;
+        $this->config              = $config;
+        $this->logger              = $logger;
     }
 
     /**
      * Hides billing address
      *
-     * @param \Magento\Quote\Model\Quote               $subject
-     * @param callable                                 $proceed
-     * @param \Magento\Quote\Api\Data\AddressInterface $address
+     * @param \Magento\Quote\Model\Quote                    $subject
+     * @param callable                                      $proceed
+     * @param \Magento\Quote\Api\Data\AddressInterface|null $address
      *
      * @return \Magento\Quote\Model\Quote
      */
     public function aroundSetBillingAddress(
         Quote $subject,
         callable $proceed,
-        AddressInterface $address
+        ?AddressInterface $address = null
     ) {
-        if (!$this->_helper->shouldBillingAddressBeHidden()) {
+        if (!$this->config->shouldBillingAddressBeHidden()) {
             return $proceed($address);
         }
 
         /** @var \Magento\Customer\Api\Data\CustomerInterface $customer */
-        $customer = $subject->getCustomer();
+        $customer         = $subject->getCustomer();
         $defaultAddressId = $customer->getDefaultBilling();
 
         try {
             /** @var \Magento\Customer\Api\Data\AddressInterface $defaultBillingAddress */
-            $defaultBillingAddress = $this->_addressRepository->getById($defaultAddressId);
+            $defaultBillingAddress = $this->addressRepository->getById($defaultAddressId);
 
             /** @var \Magento\Quote\Model\Quote\Address $old */
             $old = $subject->getBillingAddress();
 
-            if (!empty($old)) {
+            if ($old !== null) {
                 $old->importCustomerAddressData($defaultBillingAddress);
             } else {
-                $quoteAddress = $this->_quoteAddressFactory->create();
+                $quoteAddress = $this->quoteAddressFactory->create();
                 $quoteAddress->importCustomerAddressData($defaultBillingAddress);
 
                 $subject->addAddress($quoteAddress);
@@ -112,6 +112,6 @@ class QuotePlugin
 
     private function log(string $message, array $extra = [])
     {
-        $this->_logger->info('Plugin/Quote/Model/QuotePlugin - ' . $message, $extra);
+        $this->logger->info('Plugin/Quote/Model/QuotePlugin - ' . $message, $extra);
     }
 }
