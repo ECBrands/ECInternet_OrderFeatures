@@ -91,6 +91,7 @@ class OrderRepositoryInterfacePlugin
         /** @noinspection PhpUnusedParameterInspection */ OrderRepositoryInterface $subject,
         OrderInterface $resultOrder
     ) {
+        /** @var \Magento\Sales\Api\Data\OrderExtensionInterface $extensionAttributes */
         $extensionAttributes = $resultOrder->getExtensionAttributes() ?: $this->orderExtensionFactory->create();
         if ($extensionAttributes instanceof OrderExtension) {
             $resultOrder->setData(Config::ATTRIBUTE_EXTERNAL_ORDER_REFERENCE, $extensionAttributes->getExternalOrderReference());

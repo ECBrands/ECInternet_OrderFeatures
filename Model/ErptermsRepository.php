@@ -63,12 +63,12 @@ class ErptermsRepository implements ErptermsRepositoryInterface
             ->addFieldToFilter(Erpterms::COLUMN_ID, ['eq' => $id]);
 
         $erptermsCollectionCount = $erptermsCollection->getSize();
-        if ($erptermsCollectionCount == 1) {
+        if ($erptermsCollectionCount === 1) {
             $erpTerm = $erptermsCollection->getFirstItem();
             if ($erpTerm instanceof Erpterms) {
                 return $erpTerm;
             }
-        } elseif ($erptermsCollectionCount == 0) {
+        } elseif ($erptermsCollectionCount === 0) {
             throw new NoSuchEntityException(__('Unable to find Erpterms with ID "%1"', $id));
         } else {
             throw new LocalizedException(__('Found multiple Erpterms with ID "%1"', $id));

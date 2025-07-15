@@ -91,7 +91,7 @@ class AdminOnly extends AbstractCarrier implements CarrierInterface
             if (!$this->isAdmin()) {
                 return false;
             }
-        } catch (LocalizedException $e) {
+        } catch (LocalizedException) {
             return false;
         }
 
