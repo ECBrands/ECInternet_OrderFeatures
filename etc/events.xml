@@ -14,7 +14,7 @@
 	<!-- TODO: Convert this to plugin as it modified values passed in the event -->
 	<event name="sales_order_place_after">
 		<observer name="ecinternet_orderfeatures-sales_order_place_after"
-				  instance="ECInternet\OrderFeatures\Observer\SalesOrderPlaceAfter" />
+		          instance="ECInternet\OrderFeatures\Observer\SalesOrderPlaceAfter" />
 	</event>
 
 	<!-- Add 'partially_shipped' / 'fully_shipped' order comment -->
