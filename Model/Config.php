@@ -56,6 +56,12 @@ class Config
      */
     private $scopeConfig;
 
+    /**
+     * Config constructor.
+     *
+     * @param \Magento\Customer\Model\Session                    $customerSession
+     * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
+     */
     public function __construct(
         CustomerSession $customerSession,
         ScopeConfigInterface $scopeConfig
