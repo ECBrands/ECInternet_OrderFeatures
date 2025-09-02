@@ -24,21 +24,23 @@ use Magento\Payment\Model\Method\Logger;
 use Magento\Quote\Api\Data\CartInterface;
 use ECInternet\OrderFeatures\Model\Config;
 use ECInternet\OrderFeatures\Model\ResourceModel\Erpterms\CollectionFactory as ErptermsCollection;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Exception\NoSuchEntityException;
 
 /**
  * Erpterms payment method model
  */
 class Erpterms extends AbstractMethod
 {
-    const CODE                          = 'ecinternet_erpterms';
+    public const CODE                          = 'ecinternet_erpterms';
 
-    const DEFAULT_TITLE                 = 'ERPTerms';
+    public const DEFAULT_TITLE                 = 'ERPTerms';
 
-    const CONFIG_PATH_TITLE             = 'payment/ecinternet_erpterms/title';
+    public const CONFIG_PATH_TITLE             = 'payment/ecinternet_erpterms/title';
 
-    const CONFIG_PATH_ALLOWED_GROUPS    = 'payment/ecinternet_erpterms/allowed_groups';
+    public const CONFIG_PATH_ALLOWED_GROUPS    = 'payment/ecinternet_erpterms/allowed_groups';
 
-    const CONFIG_PATH_DEFAULT_TERM_NAME = 'payment/ecinternet_erpterms/default_term_name';
+    public const CONFIG_PATH_DEFAULT_TERM_NAME = 'payment/ecinternet_erpterms/default_term_name';
 
     /**
      * @var string
@@ -194,7 +196,6 @@ class Erpterms extends AbstractMethod
      * This MUST return a value or Magento Cloud throws an exception
      *
      * @return mixed|string
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     public function getTitle()
     {
@@ -322,7 +323,7 @@ class Erpterms extends AbstractMethod
      */
     private function getCustomerERPTerms()
     {
-        if ($adminQuote = $this->adminQuoteSession->getQuote()) {
+        if ($adminQuote = $this->getAdminQuote()) {
             if ($adminCustomer = $adminQuote->getCustomer()) {
                 if ($termAttribute = $adminCustomer->getCustomAttribute(Config::ATTRIBUTE_ERP_TERMS)) {
                     if ($termValue = $termAttribute->getValue()) {
@@ -336,6 +337,17 @@ class Erpterms extends AbstractMethod
             if ($customerErpTermsValue = $customer->getData(Config::ATTRIBUTE_ERP_TERMS)) {
                 return $this->uppercaseTrim((string)$customerErpTermsValue);
             }
+        }
+
+        return null;
+    }
+
+    private function getAdminQuote()
+    {
+        try {
+            return $this->adminQuoteSession->getQuote();
+        } catch (\Exception $e) {
+            $this->log('getAdminQuote()', ['exception' => $e->getMessage()]);
         }
 
         return null;
@@ -394,6 +406,8 @@ class Erpterms extends AbstractMethod
      *
      * @param string $message
      * @param array  $extra
+     *
+     * @return void
      */
     private function log(string $message, array $extra = [])
     {
