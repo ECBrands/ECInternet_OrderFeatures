@@ -14,7 +14,7 @@ use Magento\Checkout\Model\ConfigProviderInterface;
  */
 class ConfigProvider implements ConfigProviderInterface
 {
-    private const CODE = 'ecinternet_orderfeatures';
+    public const CODE = 'ecinternet_orderfeatures';
 
     /**
      * @var \ECInternet\OrderFeatures\Model\Config

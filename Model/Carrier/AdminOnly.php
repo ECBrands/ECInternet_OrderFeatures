@@ -24,7 +24,7 @@ use Psr\Log\LoggerInterface;
  */
 class AdminOnly extends AbstractCarrier implements CarrierInterface
 {
-    private const CODE = 'ecinternet_admin_only';
+    public const CODE = 'ecinternet_admin_only';
 
     protected $_code = self::CODE;
 
