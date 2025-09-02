@@ -35,7 +35,7 @@ class Save extends Erpterms implements HttpPostActionInterface
                 }
 
                 /** @var \ECInternet\OrderFeatures\Model\Erpterms $model */
-                $model = $this->_erptermsFactory->create();
+                $model = $this->erptermsFactory->create();
 
                 // Update model from form data
                 $model->setData($data);
@@ -46,7 +46,7 @@ class Save extends Erpterms implements HttpPostActionInterface
                 ]);
 
                 try {
-                    $this->_erptermsRepository->save($model);
+                    $this->erptermsRepository->save($model);
 
                     // Show success message
                     $this->messageManager->addSuccessMessage('You successfully saved the term!');

@@ -24,27 +24,27 @@ abstract class Erpterms extends Action
     /**
      * @var \Magento\Backend\Model\View\Result\ForwardFactory
      */
-    protected $_resultForwardFactory;
+    protected $resultForwardFactory;
 
     /**
      * @var \Magento\Framework\Registry
      */
-    protected $_coreRegistry;
+    protected $coreRegistry;
 
     /**
      * @var \Magento\Framework\View\Result\PageFactory
      */
-    protected $_resultPageFactory;
+    protected $resultPageFactory;
 
     /**
      * @var \ECInternet\OrderFeatures\Api\ErptermsRepositoryInterface
      */
-    protected $_erptermsRepository;
+    protected $erptermsRepository;
 
     /**
      * @var \ECInternet\OrderFeatures\Model\ErptermsFactory
      */
-    protected $_erptermsFactory;
+    protected $erptermsFactory;
 
     /**
      * Erpterms constructor.
@@ -64,13 +64,13 @@ abstract class Erpterms extends Action
         ErptermsRepositoryInterface $erptermsRepository,
         ErptermsFactory $erptermsFactory
     ) {
-        parent::__construct($context);
+        $this->resultForwardFactory = $resultForwardFactory;
+        $this->coreRegistry         = $coreRegistry;
+        $this->resultPageFactory    = $resultPageFactory;
+        $this->erptermsRepository   = $erptermsRepository;
+        $this->erptermsFactory      = $erptermsFactory;
 
-        $this->_resultForwardFactory = $resultForwardFactory;
-        $this->_coreRegistry         = $coreRegistry;
-        $this->_resultPageFactory    = $resultPageFactory;
-        $this->_erptermsRepository   = $erptermsRepository;
-        $this->_erptermsFactory      = $erptermsFactory;
+        parent::__construct($context);
     }
 
     /**
@@ -93,7 +93,7 @@ abstract class Erpterms extends Action
     protected function getErpterm(int $id)
     {
         try {
-            return $this->_erptermsRepository->getById($id);
+            return $this->erptermsRepository->getById($id);
         } catch (Exception $e) {
             error_log($e->getMessage());
         }

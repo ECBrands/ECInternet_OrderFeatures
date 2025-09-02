@@ -23,7 +23,7 @@ class Index extends Erpterms implements HttpGetActionInterface
     public function execute()
     {
         /** @var \Magento\Backend\Model\View\Result\Page $resultPage */
-        $resultPage = $this->_resultPageFactory->create();
+        $resultPage = $this->resultPageFactory->create();
 
         // Active menu
         $resultPage->setActiveMenu('ECInternet_OrderFeatures::erpterms');
