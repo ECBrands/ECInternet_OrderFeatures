@@ -13,12 +13,15 @@ use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Ui\Component\Listing\Columns\Column;
 use ECInternet\OrderFeatures\Helper\Data;
 
+/**
+ * PoNumber Column
+ */
 class PoNumber extends Column
 {
     /**
      * @var \Magento\Sales\Api\OrderRepositoryInterface
      */
-    private $_orderRepository;
+    private $orderRepository;
 
     /**
      * PoNumber constructor.
@@ -38,7 +41,7 @@ class PoNumber extends Column
     ) {
         parent::__construct($context, $uiComponentFactory, $components, $data);
 
-        $this->_orderRepository = $orderRepository;
+        $this->orderRepository = $orderRepository;
     }
 
     /**
@@ -68,7 +71,7 @@ class PoNumber extends Column
      */
     private function getPoNumber(int $orderId)
     {
-        $order = $this->_orderRepository->get($orderId);
+        $order = $this->orderRepository->get($orderId);
 
         return (string)$order->getData(Data::ATTRIBUTE_PO_NUMBER);
     }

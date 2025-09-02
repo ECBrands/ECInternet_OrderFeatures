@@ -21,8 +21,8 @@ use Magento\Payment\Model\InfoInterface;
 use Magento\Payment\Model\Method\AbstractMethod;
 use Magento\Payment\Model\Method\Logger;
 use Magento\Quote\Api\Data\CartInterface;
-use ECInternet\OrderFeatures\Helper\Data;
 use ECInternet\OrderFeatures\Logger\Logger as OrderFeaturesLogger;
+use ECInternet\OrderFeatures\Model\Config;
 
 /**
  * Free Payment Method Model
@@ -52,6 +52,11 @@ class Free extends AbstractMethod
     protected $_canCapture = true;
 
     /**
+     * @var \ECInternet\OrderFeatures\Logger\Logger
+     */
+    protected $_logger;
+
+    /**
      * @var bool
      */
     protected $_canCapturePartial = true;
@@ -64,12 +69,12 @@ class Free extends AbstractMethod
     /**
      * @var \Magento\Backend\Model\Auth\Session
      */
-    private $_authSession;
+    private $authSession;
 
     /**
-     * @var \ECInternet\OrderFeatures\Helper\Data
+     * @var \ECInternet\OrderFeatures\Model\Config
      */
-    private $_helper;
+    private $config;
 
     /**
      * Free constructor.
@@ -82,8 +87,8 @@ class Free extends AbstractMethod
      * @param \Magento\Framework\App\Config\ScopeConfigInterface           $scopeConfig
      * @param \Magento\Payment\Model\Method\Logger                         $logger
      * @param \Magento\Backend\Model\Auth\Session                          $authSession
-     * @param \ECInternet\OrderFeatures\Helper\Data                        $helper
      * @param \ECInternet\OrderFeatures\Logger\Logger                      $orderFeaturesLogger
+     * @param \ECInternet\OrderFeatures\Model\Config                       $config
      * @param \Magento\Framework\Model\ResourceModel\AbstractResource|null $resource
      * @param \Magento\Framework\Data\Collection\AbstractDb|null           $resourceCollection
      * @param array                                                        $data
@@ -98,8 +103,8 @@ class Free extends AbstractMethod
         ScopeConfigInterface $scopeConfig,
         Logger $logger,
         AuthSession $authSession,
-        Data $helper,
         OrderFeaturesLogger $orderFeaturesLogger,
+        Config $config,
         AbstractResource $resource = null,
         AbstractDb $resourceCollection = null,
         array $data = [],
@@ -119,9 +124,9 @@ class Free extends AbstractMethod
             $directory
         );
 
-        $this->_authSession = $authSession;
-        $this->_helper      = $helper;
-        $this->_logger      = $orderFeaturesLogger;
+        $this->_logger     = $orderFeaturesLogger;
+        $this->authSession = $authSession;
+        $this->config      = $config;
     }
 
     /**
@@ -193,14 +198,18 @@ class Free extends AbstractMethod
     ) {
         //$this->log('isAvailable()');
 
-        if (!$this->_helper->isModuleEnabled()) {
+        if (!$this->config->isModuleEnabled()) {
             $this->log('isAvailable() - Module is not enabled.');
-
             return false;
         }
 
         // Admin only
-        return $this->_authSession->isLoggedIn();
+        if (!$this->authSession->isLoggedIn()) {
+            $this->log('isAvailable() - Admin User is not logged in.');
+            return false;
+        }
+
+        return true;
     }
 
     /**

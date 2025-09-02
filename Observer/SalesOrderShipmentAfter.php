@@ -11,8 +11,8 @@ use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Sales\Api\Data\OrderItemInterface;
 use Magento\Sales\Model\Order;
-use ECInternet\OrderFeatures\Helper\Data;
 use ECInternet\OrderFeatures\Logger\Logger;
+use ECInternet\OrderFeatures\Model\Config;
 use Exception;
 
 /**
@@ -20,38 +20,38 @@ use Exception;
  */
 class SalesOrderShipmentAfter implements ObserverInterface
 {
-    const ORDER_STATUS_PARTIALLY_SHIPPED = 'partially_shipped';
+    private const ORDER_STATUS_PARTIALLY_SHIPPED = 'partially_shipped';
 
-    const ORDER_STATUS_FULLY_SHIPPED     = 'fully_shipped';
-
-    /**
-     * @var \ECInternet\OrderFeatures\Helper\Data
-     */
-    private $_helper;
+    private const ORDER_STATUS_FULLY_SHIPPED     = 'fully_shipped';
 
     /**
      * @var \ECInternet\OrderFeatures\Logger\Logger
      */
-    private $_logger;
+    private $logger;
+
+    /**
+     * @var \ECInternet\OrderFeatures\Model\Config
+     */
+    private $config;
 
     /**
      * @var array
      */
-    private $_skippableSkus;
+    private $skippableSkus;
 
     /**
      * SalesOrderShipmentAfter constructor.
      *
-     * @param \ECInternet\OrderFeatures\Helper\Data   $helper
      * @param \ECInternet\OrderFeatures\Logger\Logger $logger
+     * @param \ECInternet\OrderFeatures\Model\Config  $config
      */
     public function __construct(
-        Data $helper,
-        Logger $logger
+        Logger $logger,
+        Config $config
     ) {
-        $this->_helper        = $helper;
-        $this->_skippableSkus = explode(',', $helper->getSkippableSkus());
-        $this->_logger        = $logger;
+        $this->logger        = $logger;
+        $this->config        = $config;
+        $this->skippableSkus = explode(',', $config->getSkippableSkus());
     }
 
     /**
@@ -64,9 +64,8 @@ class SalesOrderShipmentAfter implements ObserverInterface
     ) {
         $this->log('execute()');
 
-        if (!$this->_helper->isModuleEnabled()) {
-            $this->log('execute() - Disabled module.');
-
+        if (!$this->config->isModuleEnabled()) {
+            $this->log('execute() - Module is disabled');
             return;
         }
 
@@ -101,6 +100,7 @@ class SalesOrderShipmentAfter implements ObserverInterface
                 $order->setState(Order::STATE_PROCESSING);
                 $order->setStatus(self::ORDER_STATUS_PARTIALLY_SHIPPED);
                 $order->addCommentToStatusHistory('Partial shipment created.', self::ORDER_STATUS_PARTIALLY_SHIPPED);
+
                 try {
                     $order->save();
                 } catch (Exception $e) {
@@ -126,7 +126,7 @@ class SalesOrderShipmentAfter implements ObserverInterface
     private function isOrderNew(
         Order $order
     ) {
-        return $order->getState() == Order::STATE_NEW;
+        return (string)$order->getState() === Order::STATE_NEW;
     }
 
     /**
@@ -176,11 +176,9 @@ class SalesOrderShipmentAfter implements ObserverInterface
 
         $ordered = (float)$orderItem->getQtyOrdered();
         $shipped = (float)$orderItem->getQtyShipped();
-
         $this->log('isItemFullyShipped()', ['ordered' => $ordered, 'shipped' => $shipped]);
 
-        // Don't use === because value is sometimes returned as integer instead of float
-        return $ordered == $shipped;
+        return $ordered === $shipped;
     }
 
     /**
@@ -193,7 +191,7 @@ class SalesOrderShipmentAfter implements ObserverInterface
     private function shouldSkipOrderItem(
         OrderItemInterface $orderItem
     ) {
-        return in_array($orderItem->getSku(), $this->_skippableSkus);
+        return in_array($orderItem->getSku(), $this->skippableSkus);
     }
 
     /**
@@ -203,7 +201,7 @@ class SalesOrderShipmentAfter implements ObserverInterface
      */
     private function shouldMarkOrderAsComplete()
     {
-        return $this->_helper->shouldMarkOrderAsComplete();
+        return $this->config->shouldMarkOrderAsComplete();
     }
 
     /**
@@ -216,6 +214,6 @@ class SalesOrderShipmentAfter implements ObserverInterface
      */
     private function log(string $message, array $extra = [])
     {
-        $this->_logger->info('Observer/SalesOrderShipmentAfter - ' . $message, $extra);
+        $this->logger->info('Observer/SalesOrderShipmentAfter - ' . $message, $extra);
     }
 }

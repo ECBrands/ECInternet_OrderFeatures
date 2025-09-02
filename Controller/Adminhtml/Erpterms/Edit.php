@@ -26,7 +26,7 @@ class Edit extends Erpterms implements HttpGetActionInterface
         $resultRedirect = $this->resultRedirectFactory->create();
 
         if ($id = (int)$this->getRequest()->getParam('id')) {
-            $this->_coreRegistry->register('current_erpterm_id', $id);
+            $this->coreRegistry->register('current_erpterm_id', $id);
 
             /** @var \ECInternet\OrderFeatures\Model\Erpterms $model */
             $model = $this->getErpterm($id);
@@ -38,7 +38,7 @@ class Edit extends Erpterms implements HttpGetActionInterface
         }
 
         /** @var \Magento\Backend\Model\View\Result\Page $resultPage */
-        $resultPage = $this->_resultPageFactory->create();
+        $resultPage = $this->resultPageFactory->create();
 
         $resultPage->setActiveMenu('ECInternet_OrderFeatures::erpterms');
         $resultPage->getConfig()->getTitle()->prepend(__('ERP Terms Maintenance'));

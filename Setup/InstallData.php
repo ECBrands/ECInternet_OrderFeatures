@@ -22,12 +22,12 @@ class InstallData implements InstallDataInterface
     /**
      * @var \Magento\Eav\Model\Config
      */
-    private $_eavConfig;
+    private $eavConfig;
 
     /**
      * @var \Magento\Eav\Setup\EavSetupFactory
      */
-    private $_eavSetupFactory;
+    private $eavSetupFactory;
 
     /**
      * InstallData constructor.
@@ -39,8 +39,8 @@ class InstallData implements InstallDataInterface
         Config $eavConfig,
         EavSetupFactory $eavSetupFactory
     ) {
-        $this->_eavConfig       = $eavConfig;
-        $this->_eavSetupFactory = $eavSetupFactory;
+        $this->eavConfig       = $eavConfig;
+        $this->eavSetupFactory = $eavSetupFactory;
     }
 
     /**
@@ -58,7 +58,7 @@ class InstallData implements InstallDataInterface
         ModuleContextInterface $context
     ) {
         /** @var \Magento\Eav\Setup\EavSetup $eavSetup */
-        $eavSetup = $this->_eavSetupFactory->create(['setup' => $setup]);
+        $eavSetup = $this->eavSetupFactory->create(['setup' => $setup]);
         $eavSetup->addAttribute(
             Customer::ENTITY,
             'erp_terms',
@@ -75,17 +75,14 @@ class InstallData implements InstallDataInterface
         );
 
         /** @var \Magento\Eav\Model\Entity\Attribute\AbstractAttribute $customerNumberAttribute */
-        $customerERPTermsAttribute = $this->_eavConfig->getAttribute(
-            Customer::ENTITY,
-            'erp_terms'
-        );
+        if ($attribute = $this->eavConfig->getAttribute(Customer::ENTITY, 'erp_terms')) {
+            $attribute->setData(
+                'used_in_forms',
+                ['adminhtml_customer']
+            );
 
-        $customerERPTermsAttribute->setData(
-            'used_in_forms',
-            ['adminhtml_customer']
-        );
-
-        /* @noinspection PhpDeprecationInspection */
-        $customerERPTermsAttribute->save();
+            /* @noinspection PhpDeprecationInspection */
+            $attribute->save();
+        }
     }
 }

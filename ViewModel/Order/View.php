@@ -16,7 +16,7 @@ class View implements ArgumentInterface
     /**
      * @var \Magento\Framework\Registry
      */
-    private $_coreRegistry;
+    private $coreRegistry;
 
     /**
      * View constructor.
@@ -26,7 +26,7 @@ class View implements ArgumentInterface
     public function __construct(
         Registry $registry
     ) {
-        $this->_coreRegistry = $registry;
+        $this->coreRegistry = $registry;
     }
 
     /**
@@ -66,12 +66,12 @@ class View implements ArgumentInterface
      */
     private function getOrder()
     {
-        if ($this->_coreRegistry->registry('current_order')) {
-            return $this->_coreRegistry->registry('current_order');
+        if ($this->coreRegistry->registry('current_order')) {
+            return $this->coreRegistry->registry('current_order');
         }
 
-        if ($this->_coreRegistry->registry('order')) {
-            return $this->_coreRegistry->registry('order');
+        if ($this->coreRegistry->registry('order')) {
+            return $this->coreRegistry->registry('order');
         }
 
         return false;

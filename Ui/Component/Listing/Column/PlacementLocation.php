@@ -21,7 +21,7 @@ class PlacementLocation extends Column
     /**
      * @var \Magento\Sales\Api\OrderRepositoryInterface
      */
-    private $_orderRepository;
+    private $orderRepository;
 
     /**
      * PlacementLocation constructor.
@@ -41,7 +41,7 @@ class PlacementLocation extends Column
     ) {
         parent::__construct($context, $uiComponentFactory, $components, $data);
 
-        $this->_orderRepository = $orderRepository;
+        $this->orderRepository = $orderRepository;
     }
 
     /**
@@ -52,7 +52,7 @@ class PlacementLocation extends Column
         if (isset($dataSource['data']['items'])) {
             foreach ($dataSource['data']['items'] as &$item) {
                 /** @var \Magento\Sales\Api\Data\OrderInterface $order */
-                $order = $this->_orderRepository->get($item['entity_id']);
+                $order = $this->orderRepository->get($item['entity_id']);
 
                 $placedInAdmin = $order->getData(Data::ATTRIBUTE_PLACED_IN_ADMIN);
                 if ($placedInAdmin) {

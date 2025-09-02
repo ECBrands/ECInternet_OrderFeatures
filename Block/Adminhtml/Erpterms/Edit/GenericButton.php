@@ -18,12 +18,12 @@ class GenericButton
     /**
      * @var \Magento\Framework\UrlInterface
      */
-    protected $_urlBuilder;
+    protected $urlBuilder;
 
     /**
      * @var \Magento\Framework\Registry
      */
-    protected $_registry;
+    protected $registry;
 
     /**
      * GenericButton constructor.
@@ -35,8 +35,8 @@ class GenericButton
         Context $context,
         Registry $registry
     ) {
-        $this->_urlBuilder = $context->getUrlBuilder();
-        $this->_registry   = $registry;
+        $this->urlBuilder = $context->getUrlBuilder();
+        $this->registry   = $registry;
     }
 
     /**
@@ -46,7 +46,7 @@ class GenericButton
      */
     public function getERPTermId()
     {
-        return $this->_registry->registry('current_erpterm_id');
+        return $this->registry->registry('current_erpterm_id');
     }
 
     /**
@@ -59,6 +59,6 @@ class GenericButton
      */
     public function getUrl(string $route = '', array $params = [])
     {
-        return $this->_urlBuilder->getUrl($route, $params);
+        return $this->urlBuilder->getUrl($route, $params);
     }
 }

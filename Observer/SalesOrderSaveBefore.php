@@ -11,54 +11,44 @@ use Magento\Backend\Model\Auth\Session as AuthSession;
 use Magento\Customer\Model\Session as CustomerSession;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
-use Magento\Framework\Event\ManagerInterface;
 use ECInternet\OrderFeatures\Helper\Data;
+use ECInternet\OrderFeatures\Model\Config;
 
 /**
  * Observer for 'sales_order_save_before' event
  */
 class SalesOrderSaveBefore implements ObserverInterface
 {
-    const FREE_PAYMENT_CODE = 'ecinternet_free';
-
     /**
      * @var \Magento\Backend\Model\Auth\Session
      */
-    private $_authSession;
+    private $authSession;
 
     /**
      * @var \Magento\Customer\Model\Session
      */
-    private $_customerSession;
+    private $customerSession;
 
     /**
-     * @var \Magento\Framework\Event\ManagerInterface
+     * @var \ECInternet\OrderFeatures\Model\Config
      */
-    private $_eventManager;
-
-    /**
-     * @var \ECInternet\OrderFeatures\Helper\Data
-     */
-    protected $_helper;
+    private $config;
 
     /**
      * SalesOrderSaveBefore constructor.
      *
      * @param \Magento\Backend\Model\Auth\Session       $authSession
      * @param \Magento\Customer\Model\Session           $customerSession
-     * @param \Magento\Framework\Event\ManagerInterface $eventManager
-     * @param \ECInternet\OrderFeatures\Helper\Data     $helper
+     * @param \ECInternet\OrderFeatures\Model\Config    $config
      */
     public function __construct(
         AuthSession $authSession,
         CustomerSession $customerSession,
-        ManagerInterface $eventManager,
-        Data $helper
+        Config $config
     ) {
-        $this->_authSession     = $authSession;
-        $this->_customerSession = $customerSession;
-        $this->_eventManager    = $eventManager;
-        $this->_helper          = $helper;
+        $this->authSession     = $authSession;
+        $this->customerSession = $customerSession;
+        $this->config          = $config;
     }
 
     /**
@@ -71,7 +61,7 @@ class SalesOrderSaveBefore implements ObserverInterface
     public function execute(
         Observer $observer
     ) {
-        if (!$this->_helper->isModuleEnabled()) {
+        if (!$this->config->isModuleEnabled()) {
             return;
         }
 
@@ -79,7 +69,7 @@ class SalesOrderSaveBefore implements ObserverInterface
         if ($order = $observer->getEvent()->getData('order')) {
             /** @var \Magento\Sales\Api\Data\OrderPaymentInterface $payment */
             if ($payment = $order->getPayment()) {
-                if ($payment->getMethod() === self::FREE_PAYMENT_CODE) {
+                if ($payment->getMethod() === \ECInternet\OrderFeatures\Model\Payment\Free::CODE) {
                     // Get all items and set them to $0
                     $products = $order->getAllItems();
                     foreach ($products as $product) {
@@ -103,7 +93,8 @@ class SalesOrderSaveBefore implements ObserverInterface
             }
 
             // Handle ERP Terms as payment Method
-            if ($customer = $this->_customerSession->getCustomer()) {
+            // TODO: Can we get this from order so we don't need to use customer session?
+            if ($customer = $this->customerSession->getCustomer()) {
                 $customerErpterms = $customer->getData('erp_terms');
 
                 if (!empty($customerErpterms)) {
@@ -112,11 +103,9 @@ class SalesOrderSaveBefore implements ObserverInterface
             }
 
             // Handle informal placed_in_admin attribute
-            if ($this->_authSession->getUser()) {
+            if ($this->authSession->getUser()) {
                 $order->setData(Data::ATTRIBUTE_PLACED_IN_ADMIN, true);
             }
-
-            $this->_eventManager->dispatch('ecinternet_orderfeatures_erp_terms_set', ['order' => $order]);
         }
     }
 }
