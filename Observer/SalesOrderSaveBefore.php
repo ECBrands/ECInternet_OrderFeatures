@@ -103,6 +103,7 @@ class SalesOrderSaveBefore implements ObserverInterface
             }
 
             // Handle ERP Terms as payment Method
+            // TODO: Can we get this from order so we don't need to use customer session?
             if ($customer = $this->customerSession->getCustomer()) {
                 $customerErpterms = $customer->getData('erp_terms');
 

@@ -11,10 +11,10 @@ use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Quote\Model\Quote\AddressFactory as QuoteAddressFactory;
 use Magento\Quote\Model\Quote\Address\ToOrderAddress;
-use Magento\Sales\Api\OrderRepositoryInterface;
-use ECInternet\OrderFeatures\Model\Config;
-use Magento\Sales\Model\Order;
 use Magento\Sales\Api\Data\OrderAddressInterface;
+use Magento\Sales\Api\OrderRepositoryInterface;
+use Magento\Sales\Model\Order;
+use ECInternet\OrderFeatures\Model\Config;
 
 /**
  * Observer for 'sales_order_place_after' event
@@ -108,18 +108,27 @@ class SalesOrderPlaceAfter implements ObserverInterface
         }
     }
 
+    /**
+     * Sets the payment address, if any, for the order
+     *
+     * @param \Magento\Sales\Model\Order                    $order
+     * @param \Magento\Sales\Api\Data\OrderAddressInterface $address
+     *
+     * @return void
+     */
     private function setOrderPaymentAddress(
         Order $order,
-        ?OrderAddressInterface $address = null
+        OrderAddressInterface $address
     ) {
-        if ($address !== null) {
-            if ($old = $this->getOrderPaymentAddress($order)) {
-                $address->setId($old->getId());
-            }
-
-            $address->setEmail($order->getCustomerEmail());
-            $order->addAddress($address->setAddressType(self::PAYMENT_ADDRESS_TYPE));
+        /** @var \Magento\Sales\Api\Data\OrderAddressInterface $orderPaymentAddress */
+        if ($orderPaymentAddress = $this->getOrderPaymentAddress($order)) {
+            $address->setId($orderPaymentAddress->getId());
         }
+
+        $address->setEmail($order->getCustomerEmail());
+        $address->setAddressType(self::PAYMENT_ADDRESS_TYPE);
+
+        $order->addAddress($address);
     }
 
     /**
