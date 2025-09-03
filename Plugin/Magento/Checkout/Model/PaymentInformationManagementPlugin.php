@@ -51,7 +51,7 @@ class PaymentInformationManagementPlugin
         int $result,
         /* @noinspection PhpMissingParamTypeInspection */ /* @noinspection PhpUnusedParameterInspection */ $cartId,
         PaymentInterface $paymentMethod,
-        ?QuoteAddressInterface $billingAddress = null
+        QuoteAddressInterface $billingAddress = null
     ) {
         if ($result) {
             /** @var \Magento\Quote\Api\Data\PaymentExtensionInterface $paymentExtensionAttributes */
