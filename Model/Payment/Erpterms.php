@@ -28,6 +28,7 @@ use ECInternet\OrderFeatures\Model\ResourceModel\Erpterms\CollectionFactory as E
 /**
  * Erpterms payment method model
  *
+ * @SuppressWarnings(PHPMD.CamelCasePropertyName)
  * @SuppressWarnings(PHPMD.LongVariable)
  */
 class Erpterms extends AbstractMethod

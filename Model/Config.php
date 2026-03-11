@@ -9,6 +9,9 @@ namespace ECInternet\OrderFeatures\Model;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
 
+/**
+ * @SuppressWarnings(PHPMD.LongVariable)
+ */
 class Config
 {
     private const CONFIG_PATH_ENABLED                = 'order_features/general/enable';

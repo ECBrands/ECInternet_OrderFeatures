@@ -26,6 +26,8 @@ use ECInternet\OrderFeatures\Model\Config;
 
 /**
  * Free Payment Method Model
+ *
+ * @SuppressWarnings(PHPMD.CamelCasePropertyName)
  */
 class Free extends AbstractMethod
 {
@@ -105,10 +107,10 @@ class Free extends AbstractMethod
         AuthSession $authSession,
         OrderFeaturesLogger $orderFeaturesLogger,
         Config $config,
-        AbstractResource $resource = null,
-        AbstractDb $resourceCollection = null,
+        ?AbstractResource $resource = null,
+        ?AbstractDb $resourceCollection = null,
         array $data = [],
-        DirectoryHelper $directory = null
+        ?DirectoryHelper $directory = null
     ) {
         parent::__construct(
             $context,

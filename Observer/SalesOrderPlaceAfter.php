@@ -18,6 +18,8 @@ use ECInternet\OrderFeatures\Model\Config;
 
 /**
  * Observer for 'sales_order_place_after' event
+ *
+ * @SuppressWarnings(PHPMD.LongVariable)
  */
 class SalesOrderPlaceAfter implements ObserverInterface
 {

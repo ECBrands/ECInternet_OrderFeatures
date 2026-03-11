@@ -50,6 +50,7 @@ class InstallData implements InstallDataInterface
      * @param \Magento\Framework\Setup\ModuleContextInterface   $context
      *
      * @return void
+     *
      * @throws \Exception
      * @throws \Magento\Framework\Exception\LocalizedException
      */

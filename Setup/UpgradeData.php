@@ -19,6 +19,8 @@ use Magento\Sales\Model\Order\StatusFactory;
 
 /**
  * Data upgrade script
+ *
+ * @SuppressWarnings(PHPMD.LongVariable)
  */
 class UpgradeData implements UpgradeDataInterface
 {

@@ -17,6 +17,8 @@ use ECInternet\OrderFeatures\Model\Config;
 
 /**
  * Plugin for Magento\Quote\Model\Quote
+ *
+ * @SuppressWarnings(PHPMD.LongVariable)
  */
 class QuotePlugin
 {
