@@ -8,14 +8,16 @@ declare(strict_types=1);
 namespace ECInternet\OrderFeatures\Plugin\Magento\Checkout\Model;
 
 use Magento\Checkout\Model\PaymentInformationManagement;
-use Magento\Quote\Api\Data\AddressInterface;
+use Magento\Quote\Api\Data\AddressInterface as QuoteAddressInterface;
 use Magento\Quote\Api\Data\PaymentExtension;
 use Magento\Quote\Api\Data\PaymentInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
-use ECInternet\OrderFeatures\Helper\Data;
+use ECInternet\OrderFeatures\Model\Config;
 
 /**
  * Plugin for Magento\Checkout\Model\PaymentInformationManagement
+ *
+ * @SuppressWarnings(PHPMD.LongVariable)
  */
 class PaymentInformationManagementPlugin
 {
@@ -53,7 +55,7 @@ class PaymentInformationManagementPlugin
         int $result,
         /* @noinspection PhpMissingParamTypeInspection */ /* @noinspection PhpUnusedParameterInspection */ $cartId,
         PaymentInterface $paymentMethod,
-        AddressInterface $billingAddress = null
+        ?QuoteAddressInterface $billingAddress = null
     ) {
         if ($result) {
             /** @var \Magento\Quote\Api\Data\PaymentExtensionInterface $paymentExtensionAttributes */
@@ -67,8 +69,8 @@ class PaymentInformationManagementPlugin
                     $order = $this->orderRepository->get($result);
 
                     // Set attribute values on Order
-                    $order->setData(Data::ATTRIBUTE_ORDER_COMMENT, $orderComment);
-                    $order->setData(Data::ATTRIBUTE_PO_NUMBER, $poNumber);
+                    $order->setData(Config::ATTRIBUTE_ORDER_COMMENT, $orderComment);
+                    $order->setData(Config::ATTRIBUTE_PO_NUMBER, $poNumber);
 
                     // Save order
                     $this->orderRepository->save($order);

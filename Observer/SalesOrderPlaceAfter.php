@@ -14,7 +14,6 @@ use Magento\Quote\Model\Quote\Address\ToOrderAddress;
 use Magento\Sales\Api\Data\OrderAddressInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Model\Order;
-use ECInternet\OrderFeatures\Logger\Logger;
 use ECInternet\OrderFeatures\Model\Config;
 
 /**
@@ -40,11 +39,6 @@ class SalesOrderPlaceAfter implements ObserverInterface
     private $orderRepository;
 
     /**
-     * @var \ECInternet\OrderFeatures\Logger\Logger
-     */
-    private $logger;
-
-    /**
      * @var \ECInternet\OrderFeatures\Model\Config
      */
     private $config;
@@ -55,20 +49,17 @@ class SalesOrderPlaceAfter implements ObserverInterface
      * @param \Magento\Quote\Model\Quote\AddressFactory         $quoteAddressFactory
      * @param \Magento\Quote\Model\Quote\Address\ToOrderAddress $toOrderAddress
      * @param \Magento\Sales\Api\OrderRepositoryInterface       $orderRepository
-     * @param \ECInternet\OrderFeatures\Logger\Logger           $logger
      * @param \ECInternet\OrderFeatures\Model\Config            $config
      */
     public function __construct(
         QuoteAddressFactory $quoteAddressFactory,
         ToOrderAddress $toOrderAddress,
         OrderRepositoryInterface $orderRepository,
-        Logger $logger,
         Config $config
     ) {
         $this->quoteAddressFactory = $quoteAddressFactory;
         $this->toOrderAddress      = $toOrderAddress;
         $this->orderRepository     = $orderRepository;
-        $this->logger              = $logger;
         $this->config              = $config;
     }
 
@@ -82,15 +73,11 @@ class SalesOrderPlaceAfter implements ObserverInterface
     public function execute(
         Observer $observer
     ) {
-        $this->log('execute()');
-
         if (!$this->config->isModuleEnabled()) {
-            $this->log('Module is disabled');
             return;
         }
 
         if (!$this->config->isPaymentBillingEnabled()) {
-            $this->log('Payment billing is disabled');
             return;
         }
 
@@ -163,10 +150,5 @@ class SalesOrderPlaceAfter implements ObserverInterface
         }
 
         return null;
-    }
-
-    private function log(string $message, array $extra = [])
-    {
-        $this->logger->info('Observer/SalesOrderPlaceAfter - ' . $message, $extra);
     }
 }

@@ -194,10 +194,8 @@ class Free extends AbstractMethod
      * @return bool
      */
     public function isAvailable(
-        CartInterface $quote = null
+        ?CartInterface $quote = null
     ) {
-        //$this->log('isAvailable()');
-
         if (!$this->config->isModuleEnabled()) {
             $this->log('isAvailable() - Module is not enabled.');
             return false;

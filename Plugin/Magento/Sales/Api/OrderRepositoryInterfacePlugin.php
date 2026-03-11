@@ -12,10 +12,12 @@ use Magento\Sales\Api\Data\OrderExtensionFactory;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\Data\OrderSearchResultInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
-use ECInternet\OrderFeatures\Helper\Data;
+use ECInternet\OrderFeatures\Model\Config;
 
 /**
  * Plugin for Magento\Sales\Api\OrderRepositoryInterface
+ *
+ * @SuppressWarnings(PHPMD.LongVariable)
  */
 class OrderRepositoryInterfacePlugin
 {
@@ -25,22 +27,22 @@ class OrderRepositoryInterfacePlugin
     private $orderExtensionFactory;
 
     /**
-     * @var \ECInternet\OrderFeatures\Helper\Data
+     * @var \ECInternet\OrderFeatures\Model\Config
      */
-    private $helper;
+    private $config;
 
     /**
      * OrderRepositoryInterfacePlugin constructor
      *
      * @param \Magento\Sales\Api\Data\OrderExtensionFactory $orderExtensionFactory
-     * @param \ECInternet\OrderFeatures\Helper\Data         $helper
+     * @param \ECInternet\OrderFeatures\Model\Config        $config
      */
     public function __construct(
         OrderExtensionFactory $orderExtensionFactory,
-        Data $helper
+        Config $config
     ) {
         $this->orderExtensionFactory = $orderExtensionFactory;
-        $this->helper                = $helper;
+        $this->config                = $config;
     }
 
     /**
@@ -91,9 +93,10 @@ class OrderRepositoryInterfacePlugin
         /** @noinspection PhpUnusedParameterInspection */ OrderRepositoryInterface $subject,
         OrderInterface $resultOrder
     ) {
+        /** @var \Magento\Sales\Api\Data\OrderExtensionInterface $extensionAttributes */
         $extensionAttributes = $resultOrder->getExtensionAttributes() ?: $this->orderExtensionFactory->create();
         if ($extensionAttributes instanceof OrderExtension) {
-            $resultOrder->setData(Data::ATTRIBUTE_EXTERNAL_ORDER_REFERENCE, $extensionAttributes->getExternalOrderReference());
+            $resultOrder->setData(Config::ATTRIBUTE_EXTERNAL_ORDER_REFERENCE, $extensionAttributes->getExternalOrderReference());
         }
 
         return [$resultOrder];
@@ -115,7 +118,7 @@ class OrderRepositoryInterfacePlugin
         /** @var \Magento\Sales\Api\Data\OrderExtension $orderExtension */
         $orderExtension = $extensionAttributes ?: $this->orderExtensionFactory->create();
 
-        $attributeCodes = $this->helper->getCustomOrderExtensionAttributeCodes();
+        $attributeCodes = $this->config->getCustomOrderExtensionAttributeCodes();
         foreach ($attributeCodes as $attributeCode) {
             if ($data = $order->getData($attributeCode)) {
                 $orderExtension->setData($attributeCode, $data);

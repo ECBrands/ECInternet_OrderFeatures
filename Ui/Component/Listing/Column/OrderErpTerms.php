@@ -7,7 +7,7 @@ declare(strict_types=1);
 
 namespace ECInternet\OrderFeatures\Ui\Component\Listing\Column;
 
-use ECInternet\OrderFeatures\Helper\Data;
+use ECInternet\OrderFeatures\Model\Config;
 use Exception;
 use Magento\Framework\View\Element\UiComponentFactory;
 use Magento\Framework\View\Element\UiComponent\ContextInterface;
@@ -88,6 +88,6 @@ class OrderErpTerms extends Column
      */
     private function getErpterms(OrderInterface $order)
     {
-        return (string)$order->getData(Data::ATTRIBUTE_ERP_TERMS);
+        return (string)$order->getData(Config::ATTRIBUTE_ERP_TERMS);
     }
 }

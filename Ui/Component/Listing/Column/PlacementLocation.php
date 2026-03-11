@@ -7,7 +7,7 @@ declare(strict_types=1);
 
 namespace ECInternet\OrderFeatures\Ui\Component\Listing\Column;
 
-use ECInternet\OrderFeatures\Helper\Data;
+use ECInternet\OrderFeatures\Model\Config;
 use Exception;
 use Magento\Framework\View\Element\UiComponentFactory;
 use Magento\Framework\View\Element\UiComponent\ContextInterface;
@@ -59,7 +59,7 @@ class PlacementLocation extends Column
             foreach ($dataSource['data']['items'] as &$item) {
                 if (is_numeric($item['entity_id'])) {
                     if ($order = $this->getOrderById((int)$item['entity_id'])) {
-                        $item[$this->getData('name')] = $this->getWasPlacedInAdmin($order);
+                        $item[$this->getData('name')] = $this->getPlacementLocation($order);
                     }
                 }
             }
@@ -86,9 +86,9 @@ class PlacementLocation extends Column
      *
      * @return string
      */
-    private function getWasPlacedInAdmin(OrderInterface $order)
+    private function getPlacementLocation(OrderInterface $order)
     {
-        return ($order->getData(Data::ATTRIBUTE_PLACED_IN_ADMIN))
+        return $order->getData(Config::ATTRIBUTE_PLACED_IN_ADMIN)
             ? 'Placed in Admin'
             : 'Placed on Frontend';
     }
