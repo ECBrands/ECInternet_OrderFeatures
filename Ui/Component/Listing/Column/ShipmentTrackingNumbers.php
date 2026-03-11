@@ -7,8 +7,10 @@ declare(strict_types=1);
 
 namespace ECInternet\OrderFeatures\Ui\Component\Listing\Column;
 
+use Exception;
 use Magento\Framework\View\Element\UiComponentFactory;
 use Magento\Framework\View\Element\UiComponent\ContextInterface;
+use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Ui\Component\Listing\Columns\Column;
 
@@ -20,7 +22,7 @@ class ShipmentTrackingNumbers extends Column
     /**
      * @var \Magento\Sales\Api\OrderRepositoryInterface
      */
-    private $_orderRepository;
+    private $orderRepository;
 
     /**
      * ShipmentTrackingNumbers constructor.
@@ -40,7 +42,7 @@ class ShipmentTrackingNumbers extends Column
     ) {
         parent::__construct($context, $uiComponentFactory, $components, $data);
 
-        $this->_orderRepository = $orderRepository;
+        $this->orderRepository = $orderRepository;
     }
 
     /**
@@ -54,26 +56,38 @@ class ShipmentTrackingNumbers extends Column
     {
         if (isset($dataSource['data']['items'])) {
             foreach ($dataSource['data']['items'] as &$item) {
-                $item[$this->getData('name')] = $this->getShipmentTrackingNumbers((int)$item['entity_id']);
+                if (is_numeric($item['entity_id'])) {
+                    if ($order = $this->getOrderById((int)$item['entity_id'])) {
+                        $item[$this->getData('name')] = $this->getShipmentTrackingNumbers($order);
+                    }
+                }
             }
         }
 
         return $dataSource;
     }
 
+    private function getOrderById(int $orderId)
+    {
+        try {
+            return $this->orderRepository->get($orderId);
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+        }
+
+        return null;
+    }
+
     /**
      * Get comma-separated string of shipment tracking numbers
      *
-     * @param int $orderId
+     * @param OrderInterface $order
      *
      * @return string
      */
-    private function getShipmentTrackingNumbers(int $orderId)
+    private function getShipmentTrackingNumbers(OrderInterface $order)
     {
         $trackingNumbers = [];
-
-        /** @var \Magento\Sales\Api\Data\OrderInterface $order */
-        $order = $this->_orderRepository->get($orderId);
 
         /** @var \Magento\Sales\Model\ResourceModel\Order\Shipment\Track\Collection $tracks */
         $tracks = $order->getTracksCollection();

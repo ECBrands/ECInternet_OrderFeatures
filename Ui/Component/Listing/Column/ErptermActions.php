@@ -46,7 +46,7 @@ class ErptermActions extends Column
     }
 
     /**
-     * Prepare Dat Source
+     * Prepare Data Source
      *
      * @param array $dataSource
      *
