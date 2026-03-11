@@ -16,6 +16,8 @@ use ECInternet\OrderFeatures\Model\Config;
 
 /**
  * Plugin for Magento\Checkout\Model\PaymentInformationManagement
+ *
+ * @SuppressWarnings(PHPMD.LongVariable)
  */
 class PaymentInformationManagementPlugin
 {
