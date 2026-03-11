@@ -85,7 +85,7 @@ class Config
     }
 
     /**
-     * Should we hide the billing address and always use the customer's default?
+     * Should we hide the billing address?
      *
      * @return bool
      */
