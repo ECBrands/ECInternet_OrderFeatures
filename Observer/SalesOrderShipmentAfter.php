@@ -177,9 +177,11 @@ class SalesOrderShipmentAfter implements ObserverInterface
 
         $ordered = (float)$orderItem->getQtyOrdered();
         $shipped = (float)$orderItem->getQtyShipped();
+
         $this->log('isItemFullyShipped()', ['ordered' => $ordered, 'shipped' => $shipped]);
 
-        return $ordered === $shipped;
+        // Don't use === because value is sometimes returned as integer instead of float
+        return $ordered == $shipped;
     }
 
     /**
