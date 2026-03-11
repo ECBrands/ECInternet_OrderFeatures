@@ -18,6 +18,8 @@ use Exception;
 
 /**
  * Abstract Adminhtml Erpterms controller
+ *
+ * @SuppressWarnings(PHPMD.ShortVariable)
  */
 abstract class Erpterms extends Action
 {
@@ -77,6 +79,8 @@ abstract class Erpterms extends Action
      * ERP Terms access rights checking
      *
      * @return bool
+     *
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
      */
     protected function _isAllowed()
     {

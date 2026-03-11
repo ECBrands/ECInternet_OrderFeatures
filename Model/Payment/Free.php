@@ -26,6 +26,8 @@ use ECInternet\OrderFeatures\Model\Config;
 
 /**
  * Free Payment Method Model
+ *
+ * @SuppressWarnings(PHPMD.CamelCasePropertyName)
  */
 class Free extends AbstractMethod
 {
@@ -35,11 +37,6 @@ class Free extends AbstractMethod
      * @var string
      */
     protected $_code = self::CODE;
-
-    /**
-     * @var bool
-     */
-    protected $_isGateway = false;
 
     /**
      * @var bool
@@ -105,10 +102,10 @@ class Free extends AbstractMethod
         AuthSession $authSession,
         OrderFeaturesLogger $orderFeaturesLogger,
         Config $config,
-        AbstractResource $resource = null,
-        AbstractDb $resourceCollection = null,
+        ?AbstractResource $resource = null,
+        ?AbstractDb $resourceCollection = null,
         array $data = [],
-        DirectoryHelper $directory = null
+        ?DirectoryHelper $directory = null
     ) {
         parent::__construct(
             $context,
@@ -194,10 +191,8 @@ class Free extends AbstractMethod
      * @return bool
      */
     public function isAvailable(
-        CartInterface $quote = null
+        ?CartInterface $quote = null
     ) {
-        //$this->log('isAvailable()');
-
         if (!$this->config->isModuleEnabled()) {
             $this->log('isAvailable() - Module is not enabled.');
             return false;

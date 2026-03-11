@@ -13,6 +13,8 @@ use Exception;
 
 /**
  * Adminhtml Erpterms Delete controller
+ *
+ * @SuppressWarnings(PHPMD.ShortVariable)
  */
 class Delete extends Erpterms implements HttpPostActionInterface
 {

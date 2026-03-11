@@ -13,6 +13,8 @@ use ECInternet\OrderFeatures\Api\Data\ErptermsInterface;
 
 /**
  * Erpterms model
+ *
+ * @SuppressWarnings(PHPMD.CamelCasePropertyName)
  */
 class Erpterms extends AbstractModel implements IdentityInterface, ErptermsInterface
 {
@@ -24,6 +26,11 @@ class Erpterms extends AbstractModel implements IdentityInterface, ErptermsInter
 
     protected $_eventObject = 'erpterms';
 
+    /**
+     * @return void
+     *
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
+     */
     protected function _construct()
     {
         $this->_init(ResourceModel\Erpterms::class);

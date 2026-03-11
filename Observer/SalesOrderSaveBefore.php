@@ -11,7 +11,6 @@ use Magento\Backend\Model\Auth\Session as AuthSession;
 use Magento\Customer\Model\Session as CustomerSession;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
-use ECInternet\OrderFeatures\Helper\Data;
 use ECInternet\OrderFeatures\Model\Config;
 
 /**
@@ -98,13 +97,13 @@ class SalesOrderSaveBefore implements ObserverInterface
                 $customerErpterms = $customer->getData('erp_terms');
 
                 if (!empty($customerErpterms)) {
-                    $order->setData(Data::ATTRIBUTE_ERP_TERMS, $customerErpterms);
+                    $order->setData(Config::ATTRIBUTE_ERP_TERMS, $customerErpterms);
                 }
             }
 
             // Handle informal placed_in_admin attribute
             if ($this->authSession->getUser()) {
-                $order->setData(Data::ATTRIBUTE_PLACED_IN_ADMIN, true);
+                $order->setData(Config::ATTRIBUTE_PLACED_IN_ADMIN, true);
             }
         }
     }

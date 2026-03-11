@@ -12,6 +12,8 @@ use ECInternet\OrderFeatures\Controller\Adminhtml\Erpterms;
 
 /**
  * Adminhtml Erpterms Edit controller
+ *
+ * @SuppressWarnings(PHPMD.ShortVariable)
  */
 class Edit extends Erpterms implements HttpGetActionInterface
 {

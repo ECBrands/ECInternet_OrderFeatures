@@ -17,6 +17,8 @@ use ECInternet\OrderFeatures\Model\Config;
 
 /**
  * Plugin for Magento\Quote\Model\Quote
+ *
+ * @SuppressWarnings(PHPMD.LongVariable)
  */
 class QuotePlugin
 {
@@ -63,16 +65,16 @@ class QuotePlugin
     /**
      * Hides billing address
      *
-     * @param \Magento\Quote\Model\Quote               $subject
-     * @param callable                                 $proceed
-     * @param \Magento\Quote\Api\Data\AddressInterface $address
+     * @param \Magento\Quote\Model\Quote                    $subject
+     * @param callable                                      $proceed
+     * @param \Magento\Quote\Api\Data\AddressInterface|null $address
      *
      * @return \Magento\Quote\Model\Quote
      */
     public function aroundSetBillingAddress(
         Quote $subject,
         callable $proceed,
-        AddressInterface $address
+        ?AddressInterface $address = null
     ) {
         if (!$this->config->isModuleEnabled()) {
             $this->log('aroundSetBillingAddress() - Module is disabled');

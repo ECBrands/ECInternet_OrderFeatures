@@ -91,28 +91,27 @@ class SalesOrderShipmentAfter implements ObserverInterface
         if ($this->doesOrderContainUnshippedItems($order)) {
             $this->log('execute() - Order contains unshipped items.', ['status' => self::ORDER_STATUS_PARTIALLY_SHIPPED]);
             $order->addCommentToStatusHistory('Partial shipment created.', self::ORDER_STATUS_PARTIALLY_SHIPPED);
-        } else {
-            $this->log('execute() - Order does not contain unshipped items.', ['status' => self::ORDER_STATUS_FULLY_SHIPPED]);
+            return;
+        }
 
-            if ($this->isOrderNew($order)) {
-                $this->log('execute() - Order is new, make partially shipped first...');
+        if ($this->isOrderNew($order)) {
+            $this->log('execute() - Order is new, make partially shipped first...');
 
-                $order->setState(Order::STATE_PROCESSING);
-                $order->setStatus(self::ORDER_STATUS_PARTIALLY_SHIPPED);
-                $order->addCommentToStatusHistory('Partial shipment created.', self::ORDER_STATUS_PARTIALLY_SHIPPED);
+            $order->setState(Order::STATE_PROCESSING);
+            $order->setStatus(self::ORDER_STATUS_PARTIALLY_SHIPPED);
+            $order->addCommentToStatusHistory('Partial shipment created.', self::ORDER_STATUS_PARTIALLY_SHIPPED);
 
-                try {
-                    $order->save();
-                } catch (Exception $e) {
-                    $this->log('execute()', ['exception' => $e->getMessage()]);
-                }
+            try {
+                $order->save();
+            } catch (Exception $e) {
+                $this->log('execute()', ['exception' => $e->getMessage()]);
             }
+        }
 
-            $order->addCommentToStatusHistory('Order fully-shipped.', self::ORDER_STATUS_FULLY_SHIPPED);
+        $order->addCommentToStatusHistory('Order fully-shipped.', self::ORDER_STATUS_FULLY_SHIPPED);
 
-            if ($this->shouldMarkOrderAsComplete()) {
-                $order->addCommentToStatusHistory('Order complete.', Order::STATE_COMPLETE);
-            }
+        if ($this->shouldMarkOrderAsComplete()) {
+            $order->addCommentToStatusHistory('Order complete.', Order::STATE_COMPLETE);
         }
     }
 
@@ -143,8 +142,10 @@ class SalesOrderShipmentAfter implements ObserverInterface
 
         // Iterate over items in order, if we find one which isn't fully shipped, change order status.
         foreach ($order->getItems() as $item) {
+            $productType = $item->getProductType();
+
             // Skip simple products with 'parent_item_id' populated
-            if ($item->getProductType() === 'simple' && $item->getParentItemId()) {
+            if ($productType === 'simple' && $item->getParentItemId()) {
                 continue;
             }
 
@@ -176,9 +177,11 @@ class SalesOrderShipmentAfter implements ObserverInterface
 
         $ordered = (float)$orderItem->getQtyOrdered();
         $shipped = (float)$orderItem->getQtyShipped();
+
         $this->log('isItemFullyShipped()', ['ordered' => $ordered, 'shipped' => $shipped]);
 
-        return $ordered === $shipped;
+        // Don't use === because value is sometimes returned as integer instead of float
+        return $ordered == $shipped;
     }
 
     /**

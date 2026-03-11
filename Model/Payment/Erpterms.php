@@ -21,13 +21,15 @@ use Magento\Payment\Model\InfoInterface;
 use Magento\Payment\Model\Method\AbstractMethod;
 use Magento\Payment\Model\Method\Logger;
 use Magento\Quote\Api\Data\CartInterface;
-use ECInternet\OrderFeatures\Helper\Data;
 use ECInternet\OrderFeatures\Logger\Logger as OrderFeaturesLogger;
 use ECInternet\OrderFeatures\Model\Config;
 use ECInternet\OrderFeatures\Model\ResourceModel\Erpterms\CollectionFactory as ErptermsCollection;
 
 /**
  * Erpterms payment method model
+ *
+ * @SuppressWarnings(PHPMD.CamelCasePropertyName)
+ * @SuppressWarnings(PHPMD.LongVariable)
  */
 class Erpterms extends AbstractMethod
 {
@@ -45,11 +47,6 @@ class Erpterms extends AbstractMethod
      * @var string
      */
     protected $_code = self::CODE;
-
-    /**
-     * @var bool
-     */
-    protected $_isGateway = false;
 
     /**
      * @var bool
@@ -112,10 +109,10 @@ class Erpterms extends AbstractMethod
         OrderFeaturesLogger $orderFeaturesLogger,
         Config $config,
         ErptermsCollection $erptermsCollection,
-        AbstractResource $resource = null,
-        AbstractDb $resourceCollection = null,
+        ?AbstractResource $resource = null,
+        ?AbstractDb $resourceCollection = null,
         array $data = [],
-        DirectoryHelper $directory = null
+        ?DirectoryHelper $directory = null
     ) {
         parent::__construct(
             $context,
@@ -246,10 +243,8 @@ class Erpterms extends AbstractMethod
      * @return bool
      */
     public function isAvailable(
-        CartInterface $quote = null
+        ?CartInterface $quote = null
     ) {
-        //$this->log('isAvailable()');
-
         if (!$this->config->isModuleEnabled()) {
             $this->log('isAvailable() - Module is not enabled.');
             return false;
@@ -281,7 +276,6 @@ class Erpterms extends AbstractMethod
         $customerGroupId = $this->getCustomerGroupId();
         if ($customerGroupId === null) {
             $this->log('isAvailable() - Customer groupId is empty.');
-
             return false;
         }
 
@@ -320,7 +314,7 @@ class Erpterms extends AbstractMethod
         $termCollection = $this->erptermsCollectionFactory->create()
             ->addFieldToFilter(\ECInternet\OrderFeatures\Model\Erpterms::COLUMN_IS_ACTIVE, ['eq' => 1]);
 
-        return $this->uppercaseTrimArray($termCollection->getColumnValues(Data::ATTRIBUTE_ERP_TERMS));
+        return $this->uppercaseTrimArray($termCollection->getColumnValues(Config::ATTRIBUTE_ERP_TERMS));
     }
 
     /**
@@ -331,7 +325,7 @@ class Erpterms extends AbstractMethod
     private function getCustomerERPTerms()
     {
         if ($customer = $this->customerSession->getCustomer()) {
-            if ($customerErpTermsValue = $customer->getData(Data::ATTRIBUTE_ERP_TERMS)) {
+            if ($customerErpTermsValue = $customer->getData(Config::ATTRIBUTE_ERP_TERMS)) {
                 return $this->uppercaseTrim((string)$customerErpTermsValue);
             }
         }

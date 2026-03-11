@@ -9,7 +9,7 @@ namespace ECInternet\OrderFeatures\ViewModel\Order;
 
 use Magento\Framework\Registry;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
-use ECInternet\OrderFeatures\Helper\Data;
+use ECInternet\OrderFeatures\Model\Config;
 
 class View implements ArgumentInterface
 {
@@ -38,7 +38,7 @@ class View implements ArgumentInterface
     {
         /** @var \Magento\Sales\Model\Order $order */
         if ($order = $this->getOrder()) {
-            return (string)$order->getData(Data::ATTRIBUTE_PO_NUMBER);
+            return (string)$order->getData(Config::ATTRIBUTE_PO_NUMBER);
         }
 
         return null;
@@ -53,7 +53,7 @@ class View implements ArgumentInterface
     {
         /** @var \Magento\Sales\Model\Order $order */
         if ($order = $this->getOrder()) {
-            return (string)$order->getData(Data::ATTRIBUTE_ERP_TERMS);
+            return (string)$order->getData(Config::ATTRIBUTE_ERP_TERMS);
         }
 
         return null;

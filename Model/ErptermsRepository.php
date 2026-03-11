@@ -16,18 +16,21 @@ use ECInternet\OrderFeatures\Model\ResourceModel\Erpterms\CollectionFactory as E
 
 /**
  * Repository for Erpterms model
+ *
+ * @SuppressWarnings(PHPMD.LongVariable)
+ * @SuppressWarnings(PHPMD.ShortVariable)
  */
 class ErptermsRepository implements ErptermsRepositoryInterface
 {
     /**
      * @var \ECInternet\OrderFeatures\Model\ResourceModel\Erpterms
      */
-    private $_resourceModel;
+    private $resourceModel;
 
     /**
      * @var \ECInternet\OrderFeatures\Model\ResourceModel\Erpterms\CollectionFactory
      */
-    private $_erptermsCollectionFactory;
+    private $erptermsCollectionFactory;
 
     /**
      * ErptermsRepository constructor.
@@ -39,8 +42,8 @@ class ErptermsRepository implements ErptermsRepositoryInterface
         ErptermsResource $resourceModel,
         ErptermsCollectionFactory $erptermsCollection
     ) {
-        $this->_resourceModel             = $resourceModel;
-        $this->_erptermsCollectionFactory = $erptermsCollection;
+        $this->resourceModel             = $resourceModel;
+        $this->erptermsCollectionFactory = $erptermsCollection;
     }
 
     /**
@@ -48,7 +51,7 @@ class ErptermsRepository implements ErptermsRepositoryInterface
      */
     public function save(ErptermsInterface $erpterms)
     {
-        $this->_resourceModel->save($erpterms);
+        $this->resourceModel->save($erpterms);
 
         return $erpterms;
     }
@@ -59,7 +62,7 @@ class ErptermsRepository implements ErptermsRepositoryInterface
     public function getById(int $id)
     {
         /** @var \ECInternet\OrderFeatures\Model\ResourceModel\Erpterms\Collection $erptermsCollection */
-        $erptermsCollection = $this->_erptermsCollectionFactory->create()
+        $erptermsCollection = $this->erptermsCollectionFactory->create()
             ->addFieldToFilter(Erpterms::COLUMN_ID, ['eq' => $id]);
 
         $erptermsCollectionCount = $erptermsCollection->getSize();
@@ -82,6 +85,6 @@ class ErptermsRepository implements ErptermsRepositoryInterface
      */
     public function delete(ErptermsInterface $erpterms)
     {
-        $this->_resourceModel->delete($erpterms);
+        $this->resourceModel->delete($erpterms);
     }
 }

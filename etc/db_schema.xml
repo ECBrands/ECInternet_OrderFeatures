@@ -11,7 +11,6 @@
 
     <table name="quote" resource="default">
         <column xsi:type="varchar" name="erp_terms" length="60" nullable="false" default="" comment="ERP Terms" />
-        <column xsi:type="varchar" name="external_order_reference" length="255" nullable="true" comment="External Order Reference" />
         <column xsi:type="varchar" name="order_comment" length="255" nullable="false" default="" comment="Order Comment" />
         <column xsi:type="smallint" name="placed_in_admin" unsigned="true" nullable="true" comment="Order was placed in admin" />
         <column xsi:type="varchar" name="po_number" length="255" nullable="false" default="" comment="PO Number" />
@@ -20,6 +19,7 @@
 
     <table name="sales_order" resource="default">
         <column xsi:type="varchar" name="erp_terms" length="60" nullable="false" default="" comment="ERP Terms" />
+        <column xsi:type="varchar" name="external_order_reference" length="255" nullable="true" comment="External Order Reference" />
         <column xsi:type="varchar" name="order_comment" length="255" nullable="false" default="" comment="Order Comment" />
         <column xsi:type="smallint" name="placed_in_admin" unsigned="true" nullable="true" comment="Order was placed in admin" />
         <column xsi:type="varchar" name="po_number" length="255" nullable="false" default="" comment="PO Number" />

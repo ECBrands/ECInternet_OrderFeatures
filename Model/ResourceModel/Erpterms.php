@@ -18,6 +18,8 @@ class Erpterms extends AbstractDb
      * Initialize resource model
      *
      * @return void
+     *
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
      */
     public function _construct()
     {
