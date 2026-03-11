@@ -7,11 +7,13 @@ declare(strict_types=1);
 
 namespace ECInternet\OrderFeatures\Ui\Component\Listing\Column;
 
+use ECInternet\OrderFeatures\Model\Config;
+use Exception;
 use Magento\Framework\View\Element\UiComponentFactory;
 use Magento\Framework\View\Element\UiComponent\ContextInterface;
+use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Ui\Component\Listing\Columns\Column;
-use ECInternet\OrderFeatures\Model\Config;
 
 /**
  * ExternalOrderReference Column
@@ -55,24 +57,37 @@ class ExternalOrderReference extends Column
     {
         if (isset($dataSource['data']['items'])) {
             foreach ($dataSource['data']['items'] as &$item) {
-                $item[$this->getData('name')] = $this->getExternalOrderReference((int)$item['entity_id']);
+                if (is_numeric($item['entity_id'])) {
+                    if ($order = $this->getOrderById((int)$item['entity_id'])) {
+                        $item[$this->getData('name')] = $this->getExternalOrderReference($order);
+                    }
+                }
             }
         }
 
         return $dataSource;
     }
 
+    private function getOrderById(int $orderId)
+    {
+        try {
+            return $this->orderRepository->get($orderId);
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+        }
+
+        return null;
+    }
+
     /**
      * Get 'external_order_reference' data
      *
-     * @param int $orderId
+     * @param OrderInterface $order
      *
      * @return string
      */
-    private function getExternalOrderReference(int $orderId)
+    private function getExternalOrderReference(OrderInterface $order)
     {
-        $order = $this->orderRepository->get($orderId);
-
         return (string)$order->getData(Config::ATTRIBUTE_EXTERNAL_ORDER_REFERENCE);
     }
 }

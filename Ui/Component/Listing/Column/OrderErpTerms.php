@@ -7,11 +7,13 @@ declare(strict_types=1);
 
 namespace ECInternet\OrderFeatures\Ui\Component\Listing\Column;
 
+use ECInternet\OrderFeatures\Model\Config;
+use Exception;
 use Magento\Framework\View\Element\UiComponentFactory;
 use Magento\Framework\View\Element\UiComponent\ContextInterface;
+use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Ui\Component\Listing\Columns\Column;
-use ECInternet\OrderFeatures\Model\Config;
 
 /**
  * OrderErpTerms Column
@@ -55,24 +57,37 @@ class OrderErpTerms extends Column
     {
         if (isset($dataSource['data']['items'])) {
             foreach ($dataSource['data']['items'] as &$item) {
-                $item[$this->getData('name')] = $this->getErpterms((int)$item['entity_id']);
+                if (is_numeric($item['entity_id'])) {
+                    if ($order = $this->getOrderById((int)$item['entity_id'])) {
+                        $item[$this->getData('name')] = $this->getErpterms($order);
+                    }
+                }
             }
         }
 
         return $dataSource;
     }
 
+    private function getOrderById(int $orderId)
+    {
+        try {
+            return $this->orderRepository->get($orderId);
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+        }
+
+        return null;
+    }
+
     /**
      * Get 'erp_terms' data
      *
-     * @param int $orderId
+     * @param OrderInterface $order
      *
      * @return string
      */
-    private function getErpterms(int $orderId)
+    private function getErpterms(OrderInterface $order)
     {
-        $order = $this->orderRepository->get($orderId);
-
         return (string)$order->getData(Config::ATTRIBUTE_ERP_TERMS);
     }
 }
