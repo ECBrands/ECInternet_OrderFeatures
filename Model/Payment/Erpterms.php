@@ -51,11 +51,6 @@ class Erpterms extends AbstractMethod
     /**
      * @var bool
      */
-    protected $_isGateway = false;
-
-    /**
-     * @var bool
-     */
     protected $_isOffline = true;
 
     /**
