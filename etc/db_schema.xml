@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="invoice" resource="default">
+        <column xsi:type="varchar" name="erp_terms" length="60" nullable="false" default="" comment="ERP Terms" />
+        <column xsi:type="smallint" name="placed_in_admin" unsigned="true" nullable="true" comment="Order was placed in admin" />
+        <column xsi:type="varchar" name="order_comment" length="255" nullable="false" default="" comment="Order Comment" />
+        <column xsi:type="varchar" name="po_number" length="255" nullable="false" default="" comment="PO Number" />
+        <column xsi:type="varchar" name="ship_via" length="255" nullable="false" default="" comment="Ship VIA" />
+    </table>
+
+    <table name="quote" resource="default">
+        <column xsi:type="varchar" name="erp_terms" length="60" nullable="false" default="" comment="ERP Terms" />
+        <column xsi:type="varchar" name="order_comment" length="255" nullable="false" default="" comment="Order Comment" />
+        <column xsi:type="smallint" name="placed_in_admin" unsigned="true" nullable="true" comment="Order was placed in admin" />
+        <column xsi:type="varchar" name="po_number" length="255" nullable="false" default="" comment="PO Number" />
+        <column xsi:type="varchar" name="ship_via" length="255" nullable="false" default="" comment="Ship VIA" />
+    </table>
+
+    <table name="sales_order" resource="default">
+        <column xsi:type="varchar" name="erp_terms" length="60" nullable="false" default="" comment="ERP Terms" />
+        <column xsi:type="varchar" name="external_order_reference" length="255" nullable="true" comment="External Order Reference" />
+        <column xsi:type="varchar" name="order_comment" length="255" nullable="false" default="" comment="Order Comment" />
+        <column xsi:type="smallint" name="placed_in_admin" unsigned="true" nullable="true" comment="Order was placed in admin" />
+        <column xsi:type="varchar" name="po_number" length="255" nullable="false" default="" comment="PO Number" />
+        <column xsi:type="varchar" name="ship_via" length="255" nullable="false" default="" comment="Ship VIA" />
+    </table>
+
+    <table name="ecinternet_orderfeatures_erpterms" resource="default" comment="ERP Terms for Order Features">
+        <column xsi:type="int" name="entity_id" padding="10" unsigned="true" nullable="false" identity="true" comment="Entity Id" />
+        <column xsi:type="timestamp" name="created_at" on_update="false" nullable="false" default="CURRENT_TIMESTAMP" comment="Created At" />
+        <column xsi:type="timestamp" name="updated_at" on_update="true" nullable="false" default="CURRENT_TIMESTAMP" comment="Updated At" />
+        <column xsi:type="smallint" name="store_id" unsigned="true" nullable="false" default="0" comment="Store Id" />
+        <column xsi:type="smallint" name="is_active" unsigned="true" nullable="false" default="0" comment="Is Active" />
+        <column xsi:type="varchar" name="erp_terms" length="60" nullable="false" default="" comment="ERP Terms" />
+        <column xsi:type="varchar" name="erp_termsdesc" length="60" nullable="false" default="" comment="ERP Terms Description" />
+        <column xsi:type="smallint" name="po_requirement" unsigned="true" nullable="false" default="0" comment="Is PO Required" />
+        <column xsi:type="smallint" name="limit_terms" unsigned="true" nullable="false" default="0" comment="Limit Terms" />
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="entity_id" />
+        </constraint>
+    </table>
+</schema>
