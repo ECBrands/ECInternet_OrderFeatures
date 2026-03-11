@@ -10,6 +10,9 @@ namespace ECInternet\OrderFeatures\Api;
 use ECInternet\OrderFeatures\Api\Data\ErptermsInterface;
 use Exception;
 
+/**
+ * @SuppressWarnings(PHPMD.ShortVariable)
+ */
 interface ErptermsRepositoryInterface
 {
     /**

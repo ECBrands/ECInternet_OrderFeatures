@@ -16,6 +16,8 @@ use ECInternet\OrderFeatures\Model\Config;
 
 /**
  * Plugin for Magento\Sales\Api\OrderRepositoryInterface
+ *
+ * @SuppressWarnings(PHPMD.LongVariable)
  */
 class OrderRepositoryInterfacePlugin
 {
