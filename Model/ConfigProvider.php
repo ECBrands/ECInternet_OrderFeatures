@@ -32,9 +32,6 @@ class ConfigProvider implements ConfigProviderInterface
         $this->config = $config;
     }
 
-    /**
-     * @inheritdoc
-     */
     public function getConfig()
     {
         return [

@@ -63,11 +63,11 @@ class UpgradeData implements UpgradeDataInterface
         EavConfig $eavConfig,
         AttributeSetFactory $attributeSetFactory,
         EavSetupFactory $eavSetupFactory,
-        StatusFactory $statusFactory
+        StatusFactory $statusFactory,
     ) {
         $this->customerSetupFactory = $customerSetupFactory;
         $this->eavConfig            = $eavConfig;
-        $this->attributeSetFactory = $attributeSetFactory;
+        $this->attributeSetFactory  = $attributeSetFactory;
         $this->eavSetupFactory      = $eavSetupFactory;
         $this->statusFactory        = $statusFactory;
     }
