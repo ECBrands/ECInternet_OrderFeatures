@@ -7,7 +7,6 @@ declare(strict_types=1);
 
 namespace ECInternet\OrderFeatures\Model;
 
-use Magento\Customer\Model\Session as CustomerSession;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 
 /**
@@ -50,11 +49,6 @@ class Config
     public const ATTRIBUTE_SHIP_VIA_DESC             = 'ship_via_desc';
 
     /**
-     * @var \Magento\Customer\Model\Session
-     */
-    private $customerSession;
-
-    /**
      * @var \Magento\Framework\App\Config\ScopeConfigInterface
      */
     private $scopeConfig;
@@ -62,15 +56,12 @@ class Config
     /**
      * Config constructor.
      *
-     * @param \Magento\Customer\Model\Session                    $customerSession
      * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
      */
     public function __construct(
-        CustomerSession $customerSession,
         ScopeConfigInterface $scopeConfig
     ) {
-        $this->customerSession = $customerSession;
-        $this->scopeConfig     = $scopeConfig;
+        $this->scopeConfig = $scopeConfig;
     }
 
     /**
@@ -94,24 +85,12 @@ class Config
     }
 
     /**
-     * Should the billing address be hidden?
+     * Should we hide the billing address?
      *
      * @return bool
      */
-    public function shouldBillingAddressBeHidden()
+    public function shouldHideBillingAddress()
     {
-        if (!$this->isModuleEnabled()) {
-            return false;
-        }
-
-        if (!$this->customerSession->isLoggedIn()) {
-            return false;
-        }
-
-        if (!$this->customerSession->getCustomer()->getDefaultBillingAddress()) {
-            return false;
-        }
-
         return $this->scopeConfig->isSetFlag(self::CONFIG_PATH_HIDE_BILLING);
     }
 

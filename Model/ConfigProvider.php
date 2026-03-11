@@ -36,7 +36,7 @@ class ConfigProvider implements ConfigProviderInterface
     {
         return [
             self::CODE => [
-                'hide_billing'    => $this->config->shouldBillingAddressBeHidden(),
+                'hide_billing'    => $this->config->shouldHideBillingAddress(),
                 'show_comment'    => $this->config->shouldShowComment(),
                 'show_ponumber'   => $this->config->shouldShowPONumber(),
                 'payment_billing' => $this->config->isPaymentBillingEnabled()

@@ -7,7 +7,6 @@ declare(strict_types=1);
 
 namespace ECInternet\OrderFeatures\Model\Payment;
 
-use Magento\Backend\Model\Session\Quote as AdminQuoteSession;
 use Magento\Customer\Model\Session as CustomerSession;
 use Magento\Directory\Helper\Data as DirectoryHelper;
 use Magento\Framework\Api\AttributeValueFactory;
@@ -59,11 +58,6 @@ class Erpterms extends AbstractMethod
     protected $_canCapture = true;
 
     /**
-     * @var \Magento\Backend\Model\Session\Quote
-     */
-    private $adminQuoteSession;
-
-    /**
      * @var \Magento\Customer\Model\Session
      */
     private $customerSession;
@@ -88,7 +82,6 @@ class Erpterms extends AbstractMethod
      * @param \Magento\Payment\Helper\Data                                             $paymentHelper
      * @param \Magento\Framework\App\Config\ScopeConfigInterface                       $scopeConfig
      * @param \Magento\Payment\Model\Method\Logger                                     $logger
-     * @param \Magento\Backend\Model\Session\Quote                                     $adminQuoteSession
      * @param \Magento\Customer\Model\Session                                          $customerSession
      * @param \ECInternet\OrderFeatures\Model\Config                                   $config
      * @param \ECInternet\OrderFeatures\Model\ResourceModel\Erpterms\CollectionFactory $erptermsCollection
@@ -105,7 +98,6 @@ class Erpterms extends AbstractMethod
         PaymentHelper $paymentHelper,
         ScopeConfigInterface $scopeConfig,
         Logger $logger,
-        AdminQuoteSession $adminQuoteSession,
         CustomerSession $customerSession,
         Config $config,
         ErptermsCollection $erptermsCollection,
@@ -128,7 +120,6 @@ class Erpterms extends AbstractMethod
             $directory
         );
 
-        $this->adminQuoteSession         = $adminQuoteSession;
         $this->customerSession           = $customerSession;
         $this->config                    = $config;
         $this->erptermsCollectionFactory = $erptermsCollection;
@@ -263,7 +254,7 @@ class Erpterms extends AbstractMethod
         }
 
         $customerErpterms = $this->getCustomerERPTerms();
-        if ($customerErpterms === null) {
+        if (!$customerErpterms) {
             $this->log("isAvailable() - Customer does not have 'erp_terms' attribute value.");
             return false;
         }
@@ -324,31 +315,10 @@ class Erpterms extends AbstractMethod
      */
     private function getCustomerERPTerms()
     {
-        if ($adminQuote = $this->getAdminQuote()) {
-            if ($adminCustomer = $adminQuote->getCustomer()) {
-                if ($termAttribute = $adminCustomer->getCustomAttribute(Config::ATTRIBUTE_ERP_TERMS)) {
-                    if ($termValue = $termAttribute->getValue()) {
-                        return $this->uppercaseTrim((string)$termValue);
-                    }
-                }
-            }
-        }
-
         if ($customer = $this->customerSession->getCustomer()) {
             if ($customerErpTermsValue = $customer->getData(Config::ATTRIBUTE_ERP_TERMS)) {
                 return $this->uppercaseTrim((string)$customerErpTermsValue);
             }
-        }
-
-        return null;
-    }
-
-    private function getAdminQuote()
-    {
-        try {
-            return $this->adminQuoteSession->getQuote();
-        } catch (\Exception $e) {
-            $this->log('getAdminQuote()', ['exception' => $e->getMessage()]);
         }
 
         return null;
@@ -361,21 +331,11 @@ class Erpterms extends AbstractMethod
      */
     private function getCustomerGroupId()
     {
-        $customerGroupId = null;
-
-        if ($adminQuote = $this->adminQuoteSession->getQuote()) {
-            if ($adminCustomer = $adminQuote->getCustomer()) {
-                $customerGroupId = $adminCustomer->getGroupId();
-            }
+        if ($customer = $this->customerSession->getCustomer()) {
+            return $customer->getGroupId();
         }
 
-        if ($customerGroupId === null) {
-            if ($customer = $this->customerSession->getCustomer()) {
-                $customerGroupId = $customer->getGroupId();
-            }
-        }
-
-        return $customerGroupId;
+        return null;
     }
 
     /**

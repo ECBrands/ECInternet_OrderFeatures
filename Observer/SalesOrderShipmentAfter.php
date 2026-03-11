@@ -65,7 +65,7 @@ class SalesOrderShipmentAfter implements ObserverInterface
         $this->log('execute()');
 
         if (!$this->config->isModuleEnabled()) {
-            $this->log('execute() - Disabled module.');
+            $this->log('execute() - Module is disabled');
             return;
         }
 
