@@ -21,6 +21,8 @@ use Psr\Log\LoggerInterface;
 
 /**
  * AdminOnly Carrier Model
+ *
+ * @SuppressWarnings(PHPMD.CamelCasePropertyName)
  */
 class AdminOnly extends AbstractCarrier implements CarrierInterface
 {

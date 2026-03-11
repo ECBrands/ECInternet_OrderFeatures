@@ -17,6 +17,8 @@ use Psr\Log\LoggerInterface;
 
 /**
  * Plugin for Magento\Quote\Model\Quote
+ *
+ * @SuppressWarnings(PHPMD.LongVariable)
  */
 class QuotePlugin
 {

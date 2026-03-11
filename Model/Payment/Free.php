@@ -25,6 +25,8 @@ use ECInternet\OrderFeatures\Model\Config;
 
 /**
  * Free Payment Method Model
+ *
+ * @SuppressWarnings(PHPMD.CamelCasePropertyName)
  */
 class Free extends AbstractMethod
 {
@@ -188,7 +190,12 @@ class Free extends AbstractMethod
         }
 
         // Admin only
-        return $this->authSession->isLoggedIn();
+        if (!$this->authSession->isLoggedIn()) {
+            $this->log('isAvailable() - Admin User is not logged in.');
+            return false;
+        }
+
+        return true;
     }
 
     /**

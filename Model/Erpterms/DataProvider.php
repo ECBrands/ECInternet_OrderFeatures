@@ -15,6 +15,8 @@ use Exception;
 
 /**
  * DataProvider for Erpterms model
+ *
+ * @SuppressWarnings(PHPMD.LongVariable)
  */
 class DataProvider extends AbstractDataProvider
 {
