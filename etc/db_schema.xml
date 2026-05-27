@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
-    <table name="invoice" resource="default">
+    <table name="sales_invoice" resource="default">
         <column xsi:type="varchar" name="erp_terms" length="60" nullable="false" default="" comment="ERP Terms" />
         <column xsi:type="smallint" name="placed_in_admin" unsigned="true" nullable="true" comment="Order was placed in admin" />
         <column xsi:type="varchar" name="order_comment" length="255" nullable="false" default="" comment="Order Comment" />
