@@ -52,37 +52,6 @@ class UpgradeSchema implements UpgradeSchemaInterface
             $setup->getConnection()->insertOnDuplicate($tableName, $status);
         }
 
-        // VERSION 1.3.4
-        if (version_compare($context->getVersion(), '1.3.4', '<')) {
-            $orderTable = $setup->getTable('sales_order');
-            $quoteTable = $setup->getTable('quote');
-
-            /** @var \Magento\Framework\DB\Adapter\AdapterInterface $connection */
-            $connection = $setup->getConnection();
-
-            $connection->addColumn(
-                $quoteTable,
-                'placed_in_admin',
-                [
-                    'type'     => Table::TYPE_SMALLINT,
-                    'nullable' => false,
-                    'default'  => 0,
-                    'comment'  => 'Order was placed in admin',
-                ]
-            );
-
-            $connection->addColumn(
-                $orderTable,
-                'placed_in_admin',
-                [
-                    'type'     => Table::TYPE_SMALLINT,
-                    'nullable' => false,
-                    'default'  => 0,
-                    'comment'  => 'Order was placed in admin',
-                ]
-            );
-        }
-
         if (version_compare($context->getVersion(), '1.4.0', '<')) {
             $table = $setup->getTable('ecinternet_orderfeatures_erpterms');
 
