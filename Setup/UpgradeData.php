@@ -150,10 +150,10 @@ class UpgradeData implements UpgradeDataInterface
                         'adminhtml_customer'
                     ]
                 ]);
-            }
 
-            /* @noinspection PhpDeprecationInspection */
-            $attribute->save();
+                /* @noinspection PhpDeprecationInspection */
+                $attribute->save();
+            }
         }
 
         // Add 'ship_via_desc' to customer
@@ -193,10 +193,10 @@ class UpgradeData implements UpgradeDataInterface
                         'adminhtml_customer'
                     ]
                 ]);
-            }
 
-            /* @noinspection PhpDeprecationInspection */
-            $attribute->save();
+                /* @noinspection PhpDeprecationInspection */
+                $attribute->save();
+            }
         }
 
         // Add 'ship_via_code' to customer address
@@ -236,10 +236,10 @@ class UpgradeData implements UpgradeDataInterface
                         'adminhtml_customer_address'
                     ]
                 ]);
-            }
 
-            /* @noinspection PhpDeprecationInspection */
-            $attribute->save();
+                /* @noinspection PhpDeprecationInspection */
+                $attribute->save();
+            }
         }
 
         // Add 'ship_via_desc' to customer address
@@ -279,10 +279,10 @@ class UpgradeData implements UpgradeDataInterface
                         'adminhtml_customer_address'
                     ]
                 ]);
-            }
 
-            /* @noinspection PhpDeprecationInspection */
-            $attribute->save();
+                /* @noinspection PhpDeprecationInspection */
+                $attribute->save();
+            }
         }
 
         // Confirm 'fully_shipped' order status has been added (UpgradeSchema)
