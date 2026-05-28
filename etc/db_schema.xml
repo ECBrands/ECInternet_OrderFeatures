@@ -26,7 +26,7 @@
         <column xsi:type="varchar" name="ship_via" length="255" nullable="false" default="" comment="Ship VIA" />
     </table>
 
-    <table name="ecinternet_orderfeatures_erpterms" resource="default" comment="ERP Terms for Order Features">
+    <table name="ecinternet_orderfeatures_erpterms" resource="default" engine="innodb" comment="ERP Terms for Order Features">
         <column xsi:type="int" name="entity_id" padding="10" unsigned="true" nullable="false" identity="true" comment="Entity Id" />
         <column xsi:type="timestamp" name="created_at" on_update="false" nullable="false" default="CURRENT_TIMESTAMP" comment="Created At" />
         <column xsi:type="timestamp" name="updated_at" on_update="true" nullable="false" default="CURRENT_TIMESTAMP" comment="Updated At" />
@@ -39,5 +39,9 @@
         <constraint xsi:type="primary" referenceId="PRIMARY">
             <column name="entity_id" />
         </constraint>
+        <index referenceId="ECINTERNET_ORDERFEATURES_ERPTERMS_FULLTEXT" indexType="fulltext">
+            <column name="erp_terms" />
+            <column name="erp_termsdesc" />
+        </index>
     </table>
 </schema>
