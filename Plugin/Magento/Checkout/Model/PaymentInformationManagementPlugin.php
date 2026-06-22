@@ -16,8 +16,6 @@ use ECInternet\OrderFeatures\Model\Config;
 
 /**
  * Plugin for Magento\Checkout\Model\PaymentInformationManagement
- *
- * @SuppressWarnings(PHPMD.LongVariable)
  */
 class PaymentInformationManagementPlugin
 {
@@ -46,14 +44,17 @@ class PaymentInformationManagementPlugin
      * @param \Magento\Quote\Api\Data\PaymentInterface             $paymentMethod
      * @param \Magento\Quote\Api\Data\AddressInterface|null        $billingAddress
      *
+     * @noinspection PhpMissingParamTypeInspection
+     * @noinspection PhpUnusedParameterInspection
+     * @SuppressWarnings(PHPMD.LongVariable)
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      *
      * @return int
      */
     public function afterSavePaymentInformationAndPlaceOrder(
-        /** @noinspection PhpUnusedParameterInspection */ PaymentInformationManagement $subject,
+        PaymentInformationManagement $subject,
         int $result,
-        /* @noinspection PhpMissingParamTypeInspection */ /* @noinspection PhpUnusedParameterInspection */ $cartId,
+        $cartId,
         PaymentInterface $paymentMethod,
         ?QuoteAddressInterface $billingAddress = null
     ) {
