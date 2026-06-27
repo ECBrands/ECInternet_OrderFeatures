@@ -8,14 +8,21 @@
 
 	<!-- afterSavePaymentInformationAndPlaceOrder() - Takes extra inputs added during checkout and adds them to Order -->
 	<type name="Magento\Checkout\Model\PaymentInformationManagement">
-		<plugin name="ecinternet_orderfeatures-checkout_model_paymentinformatiomanagement"
+		<plugin name="ecinternet_orderfeatures-magento_checkout_model_paymentinformationmanagement"
 		        type="ECInternet\OrderFeatures\Plugin\Magento\Checkout\Model\PaymentInformationManagementPlugin" />
 	</type>
 
 	<!-- Allow hiding of billing address -->
 	<type name="Magento\Quote\Model\Quote">
-		<plugin name="ecinternet_orderfeatures-quote_model_quote"
+		<plugin name="ecinternet_orderfeatures-magento_quote_model_quote"
 		        type="ECInternet\OrderFeatures\Plugin\Magento\Quote\Model\QuotePlugin" />
+	</type>
+
+    <!-- Add Logger to QuotePlugin -->
+	<type name="ECInternet\OrderFeatures\Plugin\Magento\Quote\Model\QuotePlugin">
+		<arguments>
+			<argument name="logger" xsi:type="object">ECInternetOrderFeaturesLogger</argument>
+		</arguments>
 	</type>
 
 	<!-- Add fields to Order API response -->
@@ -35,6 +42,15 @@
 			</argument>
 		</arguments>
 	</type>
+
+	<!-- Custom Logger - Must be injected into each class which needs it -->
+	<virtualType name="ECInternetOrderFeaturesLogger" type="Magento\Framework\Logger\Monolog">
+		<arguments>
+			<argument name="handlers" xsi:type="array">
+				<item name="info" xsi:type="object">ECInternet\OrderFeatures\Logger\Handler</item>
+			</argument>
+		</arguments>
+	</virtualType>
 
 	<!-- Erpterms grid collection -->
 	<virtualType name="ECInternet\OrderFeatures\Model\ResourceModel\Erpterms\Grid\Collection"
