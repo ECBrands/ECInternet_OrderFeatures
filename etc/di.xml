@@ -27,7 +27,7 @@
 
 	<!-- Add fields to Order API response -->
 	<type name="Magento\Sales\Api\OrderRepositoryInterface">
-		<plugin name="ecinternet_orderfeatures-sales_api_orderrepositoryinterface"
+		<plugin name="ecinternet_orderfeatures-magento_sales_api_orderrepositoryinterface"
 		        type="ECInternet\OrderFeatures\Plugin\Magento\Sales\Api\OrderRepositoryInterfacePlugin" />
 	</type>
 
