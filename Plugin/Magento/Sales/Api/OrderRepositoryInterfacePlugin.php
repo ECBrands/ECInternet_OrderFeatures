@@ -70,6 +70,8 @@ class OrderRepositoryInterfacePlugin
      * @param \Magento\Sales\Api\Data\OrderSearchResultInterface $searchResult
      *
      * @return \Magento\Sales\Api\Data\OrderSearchResultInterface
+     *
+     * @noinspection PhpUnusedParameterInspection
      */
     public function afterGetList(
         OrderRepositoryInterface $subject,
@@ -78,7 +80,7 @@ class OrderRepositoryInterfacePlugin
         /** @var \Magento\Sales\Api\Data\OrderInterface[] $orders */
         $orders = $searchResult->getItems();
         foreach ($orders as $order) {
-            $this->afterGet($subject, $order);
+            $this->setOrderExtensionAttributes($order);
         }
 
         return $searchResult;
