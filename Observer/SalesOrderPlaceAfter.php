@@ -144,6 +144,7 @@ class SalesOrderPlaceAfter implements ObserverInterface
         Order $order
     ) {
         foreach ($order->getAddresses() as $address) {
+            /** @noinspection PhpCastIsUnnecessaryInspection */
             if ((string)$address->getAddressType() === self::PAYMENT_ADDRESS_TYPE) {
                 if (!$address->isDeleted()) {
                     return $address;

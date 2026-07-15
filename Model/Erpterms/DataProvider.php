@@ -97,6 +97,7 @@ class DataProvider extends AbstractDataProvider
         try {
             return $this->erptermsRepository->getById($erptermsId);
         } catch (Exception $e) {
+            /** @noinspection ForgottenDebugOutputInspection */
             error_log($e->getMessage());
         }
 

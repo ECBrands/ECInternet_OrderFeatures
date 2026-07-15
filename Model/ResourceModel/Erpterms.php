@@ -19,6 +19,7 @@ class Erpterms extends AbstractDb
      *
      * @return void
      *
+     * @noinspection MagicMethodsValidityInspection
      * @SuppressWarnings(PHPMD.CamelCaseMethodName)
      */
     public function _construct()

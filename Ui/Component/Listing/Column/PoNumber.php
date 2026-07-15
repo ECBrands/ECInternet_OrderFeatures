@@ -73,6 +73,7 @@ class PoNumber extends Column
         try {
             return $this->orderRepository->get($orderId);
         } catch (Exception $e) {
+            /** @noinspection ForgottenDebugOutputInspection */
             error_log($e->getMessage());
         }
 

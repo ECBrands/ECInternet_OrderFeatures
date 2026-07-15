@@ -99,6 +99,7 @@ abstract class Erpterms extends Action
         try {
             return $this->erptermsRepository->getById($id);
         } catch (Exception $e) {
+            /** @noinspection ForgottenDebugOutputInspection */
             error_log($e->getMessage());
         }
 

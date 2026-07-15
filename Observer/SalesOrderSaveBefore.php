@@ -68,6 +68,7 @@ class SalesOrderSaveBefore implements ObserverInterface
         if ($order = $observer->getEvent()->getData('order')) {
             /** @var \Magento\Sales\Api\Data\OrderPaymentInterface $payment */
             if ($payment = $order->getPayment()) {
+                /** @noinspection PhpFullyQualifiedNameUsageInspection */
                 if ($payment->getMethod() === \ECInternet\OrderFeatures\Model\Payment\Free::CODE) {
                     // Get all items and set them to $0
                     $products = $order->getAllItems();

@@ -31,6 +31,7 @@ class Erpterms extends AbstractModel implements IdentityInterface, ErptermsInter
      *
      * @throws \Magento\Framework\Exception\LocalizedException
      *
+     * @noinspection MagicMethodsValidityInspection
      * @SuppressWarnings(PHPMD.CamelCaseMethodName)
      */
     protected function _construct()

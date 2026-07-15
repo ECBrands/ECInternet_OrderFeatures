@@ -27,6 +27,7 @@ class Collection extends AbstractCollection
      *
      * @return void
      *
+     * @noinspection MagicMethodsValidityInspection
      * @SuppressWarnings(PHPMD.CamelCaseMethodName)
      */
     protected function _construct()
